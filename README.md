@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FoundryStack
 
-## Getting Started
+Transform startup ideas into end-to-end blueprints and 4-week implementation plans with AI-powered analysis and orchestration.
 
-First, run the development server:
+## 🚀 What We've Built
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This is the MVP frontend mockup for FoundryStack, built with the tech stack decisions outlined in the project requirements.
+
+### ✅ Completed Features
+
+- **Modern Frontend**: Next.js 14 with App Router, Tailwind CSS, and shadcn/ui components
+- **GraphQL API**: GraphQL Yoga server with comprehensive schema for blueprints
+- **Responsive Design**: Beautiful, modern UI that works on all devices
+- **Blueprint Management**: Create, view, and manage startup blueprints
+- **Mock Data**: Sample blueprints with realistic market analysis and technical details
+
+### 🎯 Key Pages
+
+1. **Home Page** (`/`) - Main landing page with idea input form
+2. **Blueprints Dashboard** (`/blueprints`) - View all created blueprints
+3. **Blueprint Detail** (`/blueprints/[id]`) - Detailed view of individual blueprints
+
+### 🛠 Tech Stack
+
+- **Frontend**: Next.js 14, React 19, TypeScript
+- **Styling**: Tailwind CSS v4, shadcn/ui components
+- **API**: GraphQL Yoga with comprehensive schema
+- **Icons**: Lucide React
+- **State Management**: React hooks (useState, useEffect)
+
+### 🏗 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/graphql/          # GraphQL API endpoint
+│   ├── blueprints/           # Blueprint pages
+│   ├── globals.css           # Global styles and design system
+│   ├── layout.tsx            # Root layout
+│   └── page.tsx              # Home page
+├── components/ui/            # Reusable UI components
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── input.tsx
+│   └── textarea.tsx
+└── lib/
+    ├── graphql/              # GraphQL schema and resolvers
+    │   ├── schema.ts
+    │   ├── resolvers.ts
+    │   └── client.ts
+    └── utils.ts              # Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Start development server**:
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+3. **Open your browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+### 🎨 Design System
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app uses a comprehensive design system with:
+- **Colors**: HSL-based color tokens with dark mode support
+- **Typography**: Geist Sans and Geist Mono fonts
+- **Components**: Consistent, accessible UI components
+- **Spacing**: Tailwind's spacing scale
+- **Shadows**: Subtle elevation system
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📊 GraphQL Schema
 
-## Deploy on Vercel
+The GraphQL API includes comprehensive types for:
+- **Blueprints**: Main entity with status tracking
+- **Market Analysis**: Target market, competition, positioning
+- **Technical Blueprint**: Architecture, tech stack, API design
+- **Implementation Plan**: Sprints, tasks, milestones, deliverables
+- **Code Templates**: Starter repositories and boilerplate code
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🔄 Next Steps
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The frontend mockup is complete and ready for backend integration:
+
+1. **Python FastAPI Service**: Orchestration and LLM integration
+2. **Database Setup**: PostgreSQL with Supabase
+3. **Vector Search**: Qdrant for pattern matching
+4. **LLM Integration**: OpenAI GPT-4 API calls
+5. **Real-time Updates**: WebSocket connections for blueprint generation progress
+
+### 🎯 Key Features Demonstrated
+
+- ✅ **Idea Input**: Users can describe their startup ideas
+- ✅ **Blueprint Creation**: GraphQL mutation creates new blueprints
+- ✅ **Dashboard View**: List all blueprints with status indicators
+- ✅ **Detailed View**: Comprehensive blueprint analysis display
+- ✅ **Responsive Design**: Works on desktop, tablet, and mobile
+- ✅ **Dark Mode**: Automatic dark/light theme switching
+- ✅ **Loading States**: Proper loading indicators and error handling
+
+### 🚀 Ready for Backend Integration
+
+The frontend is fully prepared for backend integration with:
+- GraphQL client ready for real API calls
+- Error handling and loading states
+- Type-safe interfaces for all data structures
+- Responsive design that will work with real data
+
+This mockup demonstrates the complete user experience and provides a solid foundation for building the full FoundryStack application.
