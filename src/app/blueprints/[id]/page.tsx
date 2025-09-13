@@ -5,8 +5,9 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, ArrowLeft, Target, FileText, Clock, Github, Database, Brain, CheckCircle, Circle } from "lucide-react";
-import { graphqlRequest, QUERIES } from "@/lib/graphql/client";
+import { getBlueprint, getBlueprintJob, regenerateBlueprint } from "@/lib/api/client";
 import Link from "next/link";
+import BlueprintStatus from "@/components/BlueprintStatus";
 
 interface Blueprint {
   id: string;
@@ -92,6 +93,8 @@ export default function BlueprintDetailPage() {
   const params = useParams();
   const [blueprint, setBlueprint] = useState<Blueprint | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -101,12 +104,34 @@ export default function BlueprintDetailPage() {
 
   const fetchBlueprint = async (id: string) => {
     try {
-      const result = await graphqlRequest(QUERIES.GET_BLUEPRINT, { id });
-      setBlueprint(result.blueprint);
+      const result = await getBlueprint(id);
+      setBlueprint(result);
     } catch (error) {
       console.error('Failed to fetch blueprint:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBlueprintComplete = async () => {
+    setRefreshing(true);
+    if (params.id) {
+      await fetchBlueprint(params.id as string);
+    }
+    setRefreshing(false);
+  };
+
+  const handleRegenerate = async () => {
+    if (!params.id) return;
+    
+    setRegenerating(true);
+    try {
+      const updatedBlueprint = await regenerateBlueprint(params.id as string);
+      setBlueprint(updatedBlueprint);
+    } catch (error) {
+      console.error('Failed to regenerate blueprint:', error);
+    } finally {
+      setRegenerating(false);
     }
   };
 
@@ -198,8 +223,31 @@ export default function BlueprintDetailPage() {
                 <h1 className="text-2xl font-bold text-white">FoundryStack</h1>
               </div>
             </div>
-            <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(blueprint.status)}`}>
-              {blueprint.status}
+            <div className="flex items-center gap-4">
+              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(blueprint.status)}`}>
+                {blueprint.status}
+              </div>
+              {blueprint.status === 'COMPLETED' && (
+                <Button
+                  onClick={handleRegenerate}
+                  disabled={regenerating}
+                  variant="outline"
+                  size="sm"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  {regenerating ? (
+                    <>
+                      <Brain className="w-4 h-4 mr-2 animate-spin" />
+                      Regenerating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Regenerate
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -221,6 +269,13 @@ export default function BlueprintDetailPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Blueprint Generation Status */}
+              {(blueprint.status === 'ANALYZING' || blueprint.status === 'GENERATING') && (
+                <BlueprintStatus 
+                  blueprintId={blueprint.id} 
+                  onComplete={handleBlueprintComplete}
+                />
+              )}
               {/* Market Analysis */}
               {blueprint.marketAnalysis && (
                 <div className="glass rounded-2xl p-8 border border-white/10">

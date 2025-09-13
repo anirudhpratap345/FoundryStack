@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight } from "lucide-react";
-import { graphqlRequest, MUTATIONS } from "@/lib/graphql/client";
+import { createBlueprint } from "@/lib/api/client";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
@@ -18,15 +18,13 @@ export default function Home() {
     
     setIsGenerating(true);
     try {
-      const result = await graphqlRequest(MUTATIONS.CREATE_BLUEPRINT, {
-        input: {
-          title: idea.split('\n')[0].substring(0, 100) || 'New Blueprint',
-          description: idea,
-          idea: idea
-        }
+      const result = await createBlueprint({
+        title: idea.split('\n')[0].substring(0, 100) || 'New Blueprint',
+        description: idea,
+        idea: idea
       });
       
-      console.log('Blueprint created:', result.createBlueprint);
+      console.log('Blueprint created:', result);
       // Redirect to blueprints page to see the created blueprint
       window.location.href = '/blueprints';
     } catch (error) {

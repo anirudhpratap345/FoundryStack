@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Plus, Eye, Trash2, Calendar, Clock } from "lucide-react";
-import { graphqlRequest, QUERIES } from "@/lib/graphql/client";
+import { getBlueprints } from "@/lib/api/client";
 import Link from "next/link";
 
 interface Blueprint {
@@ -26,8 +26,8 @@ export default function BlueprintsPage() {
 
   const fetchBlueprints = async () => {
     try {
-      const result = await graphqlRequest(QUERIES.GET_BLUEPRINTS);
-      setBlueprints(result.blueprints);
+      const result = await getBlueprints();
+      setBlueprints(result);
     } catch (error) {
       console.error('Failed to fetch blueprints:', error);
     } finally {
