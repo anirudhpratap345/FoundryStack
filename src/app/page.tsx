@@ -3,33 +3,167 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight } from "lucide-react";
+import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight, AlertCircle, CheckCircle } from "lucide-react";
 import { createBlueprint } from "@/lib/api/client";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
+import { validateBlueprintIdea, validateBlueprintTitle } from "@/lib/validation";
 
 export default function Home() {
   const [idea, setIdea] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  const generateTitle = (idea: string): string => {
+    // Extract key concepts from the idea
+    const ideaLower = idea.toLowerCase();
+    
+    // Common patterns to extract better titles
+    if (ideaLower.includes('ai') && ideaLower.includes('fintech')) {
+      return 'AI Fintech Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('healthcare')) {
+      return 'AI Healthcare Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('ecommerce')) {
+      return 'AI E-commerce Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('education')) {
+      return 'AI Education Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('logistics')) {
+      return 'AI Logistics Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('real estate')) {
+      return 'AI Real Estate Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('agriculture')) {
+      return 'AI Agriculture Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('energy')) {
+      return 'AI Energy Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('transportation')) {
+      return 'AI Transportation Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('entertainment')) {
+      return 'AI Entertainment Blueprint';
+    }
+    
+    // Generic AI patterns
+    if (ideaLower.includes('ai') && ideaLower.includes('startup')) {
+      return 'AI Startup Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('platform')) {
+      return 'AI Platform Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('app')) {
+      return 'AI App Blueprint';
+    }
+    if (ideaLower.includes('ai') && ideaLower.includes('saas')) {
+      return 'AI SaaS Blueprint';
+    }
+    
+    // Fintech patterns
+    if (ideaLower.includes('fintech') && ideaLower.includes('startup')) {
+      return 'Fintech Startup Blueprint';
+    }
+    if (ideaLower.includes('fintech') && ideaLower.includes('platform')) {
+      return 'Fintech Platform Blueprint';
+    }
+    if (ideaLower.includes('fintech') && ideaLower.includes('app')) {
+      return 'Fintech App Blueprint';
+    }
+    
+    // E-commerce patterns
+    if (ideaLower.includes('ecommerce') && ideaLower.includes('startup')) {
+      return 'E-commerce Startup Blueprint';
+    }
+    if (ideaLower.includes('ecommerce') && ideaLower.includes('platform')) {
+      return 'E-commerce Platform Blueprint';
+    }
+    
+    // Healthcare patterns
+    if (ideaLower.includes('healthcare') && ideaLower.includes('startup')) {
+      return 'Healthcare Startup Blueprint';
+    }
+    if (ideaLower.includes('healthcare') && ideaLower.includes('platform')) {
+      return 'Healthcare Platform Blueprint';
+    }
+    
+    // Education patterns
+    if (ideaLower.includes('education') && ideaLower.includes('startup')) {
+      return 'EdTech Startup Blueprint';
+    }
+    if (ideaLower.includes('education') && ideaLower.includes('platform')) {
+      return 'EdTech Platform Blueprint';
+    }
+    
+    // Generic patterns
+    if (ideaLower.includes('startup')) {
+      return 'Startup Blueprint';
+    }
+    if (ideaLower.includes('platform')) {
+      return 'Platform Blueprint';
+    }
+    if (ideaLower.includes('app')) {
+      return 'App Blueprint';
+    }
+    if (ideaLower.includes('saas')) {
+      return 'SaaS Blueprint';
+    }
+    
+    // Fallback: clean up the first line
+    const firstLine = idea.split('\n')[0].trim();
+    if (firstLine.length > 50) {
+      return firstLine.substring(0, 50) + '... Blueprint';
+    }
+    return firstLine + ' Blueprint';
+  };
 
   const handleGenerateBlueprint = async () => {
-    if (!idea.trim()) return;
+    // Clear previous errors
+    setError("");
+    setValidationErrors([]);
+    setSuccess("");
+    
+    // Validate input
+    const ideaValidation = validateBlueprintIdea(idea);
+    if (!ideaValidation.isValid) {
+      setValidationErrors(ideaValidation.errors.map(e => e.message));
+      return;
+    }
     
     setIsGenerating(true);
+    
     try {
       const result = await createBlueprint({
-        title: idea.split('\n')[0].substring(0, 100) || 'New Blueprint',
+        title: generateTitle(idea),
         description: idea,
         idea: idea
       });
       
       console.log('Blueprint created:', result);
-      // Redirect to blueprints page to see the created blueprint
-      window.location.href = '/blueprints';
-    } catch (error) {
+      setSuccess("Blueprint created successfully! Redirecting...");
+      
+      // Redirect to blueprints page after a short delay
+      setTimeout(() => {
+        window.location.href = '/blueprints';
+      }, 1500);
+    } catch (error: any) {
       console.error('Failed to create blueprint:', error);
-      // TODO: Show error message to user
+      
+      // Handle different error types
+      if (error.message?.includes('Rate limit')) {
+        setError("You're creating blueprints too quickly. Please wait a moment and try again.");
+      } else if (error.message?.includes('Validation failed')) {
+        setError("Please check your input and try again.");
+      } else {
+        setError("Failed to create blueprint. Please try again.");
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -172,9 +306,59 @@ export default function Home() {
                 <Textarea
                   placeholder="Example: I want to build a SaaS platform that helps small restaurants manage their inventory, reduce food waste, and optimize ordering. The target market is independent restaurants with 1-10 locations that struggle with manual inventory tracking and often over-order ingredients..."
                   value={idea}
-                  onChange={(e) => setIdea(e.target.value)}
+                  onChange={(e) => {
+                    setIdea(e.target.value);
+                    setError("");
+                    setSuccess("");
+                  }}
                   className="min-h-[120px] bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20"
                 />
+                
+                {/* Error Message */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+                  >
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </motion.div>
+                )}
+
+                {/* Validation Errors */}
+                {validationErrors.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+                  >
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-red-400 text-sm font-medium mb-1">Please fix the following issues:</p>
+                        <ul className="text-red-300 text-sm space-y-1">
+                          {validationErrors.map((error, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <span className="text-red-400">•</span>
+                              {error}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                
+                {/* Success Message */}
+                {success && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
+                  >
+                    <p className="text-green-400 text-sm">{success}</p>
+                  </motion.div>
+                )}
                 <AnimatedButton 
                   onClick={handleGenerateBlueprint}
                   disabled={!idea.trim() || isGenerating}

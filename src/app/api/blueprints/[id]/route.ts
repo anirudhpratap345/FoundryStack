@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiBlueprintGenerator } from '@/lib/ai/openai';
-import { blueprints } from '@/lib/data/blueprints';
+import { BlueprintService } from '@/lib/supabase/blueprints';
 
 // GET /api/blueprints/[id] - Get a specific blueprint
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const blueprint = blueprints.find(bp => bp.id === id);
+    const blueprint = await BlueprintService.getById(id);
     
     if (!blueprint) {
       return NextResponse.json(
@@ -18,7 +18,18 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ blueprint });
+    // Transform snake_case to camelCase for frontend compatibility
+    const transformedBlueprint = {
+      ...blueprint,
+      marketAnalysis: blueprint.market_analysis,
+      technicalBlueprint: blueprint.technical_blueprint,
+      implementationPlan: blueprint.implementation_plan,
+      codeTemplates: blueprint.code_templates || [],
+      createdAt: blueprint.created_at,
+      updatedAt: blueprint.updated_at
+    };
+
+    return NextResponse.json({ blueprint: transformedBlueprint });
   } catch (error) {
     console.error('Failed to fetch blueprint:', error);
     return NextResponse.json(
@@ -36,20 +47,12 @@ export async function PUT(
   try {
     const { id } = await params;
     const { title, description, status } = await request.json();
-    const blueprint = blueprints.find(bp => bp.id === id);
     
-    if (!blueprint) {
-      return NextResponse.json(
-        { error: 'Blueprint not found' },
-        { status: 404 }
-      );
-    }
-
-    // Update blueprint
-    if (title) blueprint.title = title;
-    if (description) blueprint.description = description;
-    if (status) blueprint.status = status;
-    blueprint.updatedAt = new Date().toISOString();
+    const blueprint = await BlueprintService.update(id, {
+      title,
+      description,
+      status
+    });
 
     return NextResponse.json({ blueprint });
   } catch (error) {
@@ -68,16 +71,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const index = blueprints.findIndex(bp => bp.id === id);
-    
-    if (index === -1) {
-      return NextResponse.json(
-        { error: 'Blueprint not found' },
-        { status: 404 }
-      );
-    }
-
-    blueprints.splice(index, 1);
+    await BlueprintService.delete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete blueprint:', error);
@@ -95,7 +89,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const blueprint = blueprints.find(bp => bp.id === id);
+    const blueprint = await BlueprintService.getById(id);
     
     if (!blueprint) {
       return NextResponse.json(
@@ -105,33 +99,33 @@ export async function POST(
     }
 
     // Update status to analyzing
-    blueprint.status = 'ANALYZING';
-    blueprint.updatedAt = new Date().toISOString();
+    await BlueprintService.update(id, { status: 'ANALYZING' });
 
     // Generate new AI content in background
     try {
-      const [marketAnalysis, technicalBlueprint, implementationPlan] = await Promise.all([
-        aiBlueprintGenerator.generateMarketAnalysis(blueprint.idea || blueprint.description, blueprint.title),
-        aiBlueprintGenerator.generateTechnicalBlueprint(blueprint.idea || blueprint.description, blueprint.title),
-        aiBlueprintGenerator.generateImplementationPlan(blueprint.idea || blueprint.description, blueprint.title)
-      ]);
+      // Extract business concept from the idea
+      const businessConcept = blueprint.idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
+      
+      const marketAnalysis = await aiBlueprintGenerator.generateMarketAnalysis(businessConcept, blueprint.title);
+      const technicalBlueprint = await aiBlueprintGenerator.generateTechnicalBlueprint(businessConcept, marketAnalysis);
+      const implementationPlan = await aiBlueprintGenerator.generateImplementationPlan(businessConcept, technicalBlueprint);
 
       // Update blueprint with new AI-generated content
-      blueprint.marketAnalysis = marketAnalysis;
-      blueprint.technicalBlueprint = technicalBlueprint;
-      blueprint.implementationPlan = implementationPlan;
-      blueprint.status = 'COMPLETED';
-      blueprint.updatedAt = new Date().toISOString();
+      const updatedBlueprint = await BlueprintService.update(id, {
+        market_analysis: marketAnalysis,
+        technical_blueprint: technicalBlueprint,
+        implementation_plan: implementationPlan,
+        status: 'COMPLETED'
+      });
 
       return NextResponse.json({ 
         success: true, 
         message: 'Blueprint regenerated successfully',
-        blueprint 
+        blueprint: updatedBlueprint 
       });
     } catch (error) {
       console.error('AI regeneration failed:', error);
-      blueprint.status = 'FAILED';
-      blueprint.updatedAt = new Date().toISOString();
+      await BlueprintService.update(id, { status: 'FAILED' });
       
       return NextResponse.json(
         { error: 'Failed to regenerate blueprint content' },

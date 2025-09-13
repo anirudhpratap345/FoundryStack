@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Plus, Eye, Trash2, Calendar, Clock } from "lucide-react";
-import { getBlueprints } from "@/lib/api/client";
+import { Sparkles, Plus, Eye, Trash2, Calendar, Clock, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
+import { getBlueprints, deleteBlueprint } from "@/lib/api/client";
 import Link from "next/link";
+import { BlueprintListSkeleton } from "@/components/LoadingSkeleton";
 
 interface Blueprint {
   id: string;
@@ -19,12 +19,20 @@ interface Blueprint {
 export default function BlueprintsPage() {
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBlueprints();
   }, []);
 
-  const fetchBlueprints = async () => {
+  const fetchBlueprints = async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    
     try {
       const result = await getBlueprints();
       setBlueprints(result);
@@ -32,6 +40,24 @@ export default function BlueprintsPage() {
       console.error('Failed to fetch blueprints:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleDeleteBlueprint = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeleting(id);
+    try {
+      await deleteBlueprint(id);
+      setBlueprints(blueprints.filter(bp => bp.id !== id));
+    } catch (error) {
+      console.error('Failed to delete blueprint:', error);
+      alert('Failed to delete blueprint. Please try again.');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -66,10 +92,11 @@ export default function BlueprintsPage() {
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-            <p className="mt-4 text-gray-300">Loading blueprints...</p>
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-4">Your Blueprints</h1>
+            <p className="text-gray-300">AI-generated startup blueprints</p>
           </div>
+          <BlueprintListSkeleton />
         </div>
       </div>
     );
@@ -105,20 +132,32 @@ export default function BlueprintsPage() {
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-6 py-16">
         <div className="flex items-center justify-between mb-12">
-                           <div>
-                   <h2 className="text-3xl font-bold text-white mb-3">
-                     Your Blueprints
-                   </h2>
-                   <p className="text-lg text-gray-300">
-                     Manage and view your startup blueprints
-                   </p>
-                 </div>
-          <Link href="/">
-            <Button className="flex items-center gap-3 h-12 px-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 border-0 shadow-lg shadow-blue-500/25">
-              <Plus className="h-5 w-5" />
-              Create New Blueprint
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-3">
+              Your Blueprints
+            </h2>
+            <p className="text-lg text-gray-300">
+              Manage and view your startup blueprints
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => fetchBlueprints(true)}
+              disabled={refreshing}
+              variant="outline" 
+              size="sm" 
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              {refreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
-          </Link>
+            <Link href="/">
+              <Button className="flex items-center gap-3 h-12 px-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 border-0 shadow-lg shadow-blue-500/25">
+                <Plus className="h-5 w-5" />
+                Create New Blueprint
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {blueprints.length === 0 ? (
@@ -148,7 +187,10 @@ export default function BlueprintsPage() {
                            <h3 className="text-lg font-semibold text-white mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors">
                              {blueprint.title}
                            </h3>
-                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(blueprint.status)}`}>
+                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(blueprint.status)}`}>
+                      {blueprint.status === 'COMPLETED' && <CheckCircle className="h-3 w-3" />}
+                      {blueprint.status === 'ANALYZING' && <Clock className="h-3 w-3 animate-pulse" />}
+                      {blueprint.status === 'FAILED' && <AlertCircle className="h-3 w-3" />}
                       {blueprint.status}
                     </div>
                   </div>
@@ -176,8 +218,18 @@ export default function BlueprintsPage() {
                       View Details
                     </Button>
                   </Link>
-                  <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
-                    <Trash2 className="h-4 w-4" />
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500"
+                    onClick={() => handleDeleteBlueprint(blueprint.id, blueprint.title)}
+                    disabled={deleting === blueprint.id}
+                  >
+                    {deleting === blueprint.id ? (
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>

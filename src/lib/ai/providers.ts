@@ -32,7 +32,7 @@ export class GeminiProvider implements AIProvider {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         const model = this.genAI.getGenerativeModel({
-          model: "gemini-2.5-pro", // Latest and most capable model
+          model: "gemini-2.5-flash", // Latest stable model
           generationConfig: {
             maxOutputTokens: maxTokens,
             temperature: 0.7,
@@ -49,8 +49,13 @@ export class GeminiProvider implements AIProvider {
         lastError = error;
         console.error(`Gemini API error (attempt ${attempt}):`, error);
         
-        // Check if it's a rate limit error
+        // Check if it's a rate limit or quota error
         if (error.status === 429 || error.message?.includes('quota') || error.message?.includes('rate limit')) {
+          if (error.message?.includes('quota') && error.message?.includes('exceeded')) {
+            console.log('API quota exceeded. Falling back to mock data.');
+            throw new Error('QUOTA_EXCEEDED');
+          }
+          
           const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff: 2s, 4s, 8s
           console.log(`Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));

@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, ArrowLeft, Target, FileText, Clock, Github, Database, Brain, CheckCircle, Circle } from "lucide-react";
-import { getBlueprint, getBlueprintJob, regenerateBlueprint } from "@/lib/api/client";
+import { Sparkles, ArrowLeft, Target, FileText, Clock, Github, Brain, Circle, Trash2, RefreshCw } from "lucide-react";
+import { getBlueprint, regenerateBlueprint, exportBlueprint, exportBlueprintAsMarkdown, deleteBlueprint } from "@/lib/api/client";
 import Link from "next/link";
-import BlueprintStatus from "@/components/BlueprintStatus";
+import MarketAnalysisDisplay from "@/components/MarketAnalysisDisplay";
+import TechnicalBlueprintDisplay from "@/components/TechnicalBlueprintDisplay";
+import { BlueprintDetailSkeleton } from "@/components/LoadingSkeleton";
 
 interface Blueprint {
   id: string;
@@ -93,8 +94,9 @@ export default function BlueprintDetailPage() {
   const params = useParams();
   const [blueprint, setBlueprint] = useState<Blueprint | null>(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.id) {
@@ -106,20 +108,23 @@ export default function BlueprintDetailPage() {
     try {
       const result = await getBlueprint(id);
       setBlueprint(result);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch blueprint:', error);
+      if (error instanceof Error) {
+        setError(error.message);
+        // If blueprint not found, redirect to blueprints list after a delay
+        if (error.message.includes('not found')) {
+          setTimeout(() => {
+            window.location.href = '/blueprints';
+          }, 3000);
+        }
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBlueprintComplete = async () => {
-    setRefreshing(true);
-    if (params.id) {
-      await fetchBlueprint(params.id as string);
-    }
-    setRefreshing(false);
-  };
 
   const handleRegenerate = async () => {
     if (!params.id) return;
@@ -132,6 +137,38 @@ export default function BlueprintDetailPage() {
       console.error('Failed to regenerate blueprint:', error);
     } finally {
       setRegenerating(false);
+    }
+  };
+
+  const handleExportJSON = () => {
+    if (blueprint) {
+      exportBlueprint(blueprint);
+    }
+  };
+
+  const handleExportMarkdown = () => {
+    if (blueprint) {
+      exportBlueprintAsMarkdown(blueprint);
+    }
+  };
+
+  const handleDeleteBlueprint = async () => {
+    if (!blueprint) return;
+    
+    if (!confirm(`Are you sure you want to delete "${blueprint.title}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await deleteBlueprint(blueprint.id);
+      // Redirect to blueprints list after successful deletion
+      window.location.href = '/blueprints';
+    } catch (error) {
+      console.error('Failed to delete blueprint:', error);
+      alert('Failed to delete blueprint. Please try again.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -171,9 +208,33 @@ export default function BlueprintDetailPage() {
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-            <p className="mt-4 text-gray-300">Loading blueprint...</p>
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-4">Loading Blueprint</h1>
+            <p className="text-gray-300">Please wait while we load your blueprint...</p>
+          </div>
+          <BlueprintDetailSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen relative overflow-hidden">
+        <div className="absolute inset-0 animated-gradient opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
+        <div className="relative z-10 container mx-auto px-6 py-16">
+          <div className="text-center max-w-md mx-auto">
+            <div className="glass rounded-2xl p-8 border border-red-500/20">
+              <div className="text-red-400 text-6xl mb-4">⚠️</div>
+              <h1 className="text-2xl font-bold text-white mb-4">Blueprint Not Found</h1>
+              <p className="text-gray-300 mb-6">{error}</p>
+              <p className="text-gray-400 text-sm mb-6">Redirecting to blueprints list in a few seconds...</p>
+              <Link href="/blueprints" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                <ArrowLeft className="h-4 w-4" />
+                Go to Blueprints
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -270,72 +331,54 @@ export default function BlueprintDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Blueprint Generation Status */}
-              {(blueprint.status === 'ANALYZING' || blueprint.status === 'GENERATING') && (
-                <BlueprintStatus 
-                  blueprintId={blueprint.id} 
-                  onComplete={handleBlueprintComplete}
-                />
-              )}
-              {/* Market Analysis */}
-              {blueprint.marketAnalysis && (
+              {blueprint.status === 'ANALYZING' && (
                 <div className="glass rounded-2xl p-8 border border-white/10">
-                                           <div className="flex items-center gap-3 mb-4">
-                           <div className="p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800">
-                             <Target className="h-5 w-5 text-white" />
-                           </div>
-                           <h3 className="text-xl font-semibold text-white">Market Analysis</h3>
-                         </div>
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-semibold text-white mb-2 text-base">Target Market</h4>
-                      <p className="text-gray-300 leading-relaxed text-sm">{blueprint.marketAnalysis.targetMarket}</p>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-gradient-to-r from-yellow-600 to-orange-600">
+                      <Brain className="h-5 w-5 text-white animate-pulse" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-2 text-base">Positioning</h4>
-                      <p className="text-gray-300 leading-relaxed text-sm">{blueprint.marketAnalysis.positioning}</p>
+                    <h3 className="text-xl font-semibold text-white">Generating Blueprint</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-gray-300">AI is analyzing your idea and generating comprehensive blueprint...</span>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-2 text-base">Revenue Model</h4>
-                      <p className="text-gray-300 leading-relaxed text-sm">{blueprint.marketAnalysis.revenueModel}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-2 text-base">Market Size</h4>
-                      <p className="text-gray-300 leading-relaxed text-sm">{blueprint.marketAnalysis.marketSize}</p>
+                    <div className="text-sm text-gray-400">
+                      This may take 1-2 minutes. The page will update automatically when complete.
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Technical Blueprint */}
-              {blueprint.technicalBlueprint && (
-                <div className="glass rounded-2xl p-8 border border-white/10">
-                                           <div className="flex items-center gap-3 mb-4">
-                           <div className="p-2 rounded-lg bg-gradient-to-r from-slate-600 to-slate-800">
-                             <FileText className="h-5 w-5 text-white" />
-                           </div>
-                           <h3 className="text-xl font-semibold text-white">Technical Blueprint</h3>
-                         </div>
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-semibold text-white mb-2 text-base">Architecture</h4>
-                      <p className="text-gray-300 leading-relaxed text-sm">{blueprint.technicalBlueprint.architecture}</p>
+              {blueprint.status === 'FAILED' && (
+                <div className="glass rounded-2xl p-8 border border-red-500/20 bg-red-500/5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-red-600">
+                      <Circle className="h-5 w-5 text-white" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-3 text-base">Tech Stack</h4>
-                      <div className="grid gap-3">
-                        {blueprint.technicalBlueprint.techStack.map((tech, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                            <div>
-                              <span className="font-medium text-white text-sm">{tech.name}</span>
-                              {tech.version && <span className="text-xs text-gray-400 ml-2">v{tech.version}</span>}
-                            </div>
-                            <span className="text-xs text-gray-400 bg-white/10 px-2 py-1 rounded-full">{tech.category}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <h3 className="text-xl font-semibold text-white">Generation Failed</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-gray-300">The AI generation failed. This could be due to API limits or technical issues.</p>
+                    <Button 
+                      onClick={handleRegenerate}
+                      disabled={regenerating}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {regenerating ? 'Retrying...' : 'Try Again'}
+                    </Button>
                   </div>
                 </div>
+              )}
+              {/* Market Analysis */}
+              {blueprint.marketAnalysis && (
+                <MarketAnalysisDisplay analysis={blueprint.marketAnalysis} />
+              )}
+
+              {/* Technical Blueprint */}
+              {blueprint.technicalBlueprint && (
+                <TechnicalBlueprintDisplay blueprint={blueprint.technicalBlueprint} />
               )}
 
               {/* Implementation Plan */}
@@ -381,24 +424,73 @@ export default function BlueprintDetailPage() {
                                    <div className="glass rounded-2xl p-6 border border-white/10">
                        <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
                 <div className="space-y-3">
-                  <Button className="w-full h-12 border-white/20 text-white hover:bg-white/10" variant="outline">
+                  <Button 
+                    className="w-full h-12 border-white/20 text-white hover:bg-white/10" 
+                    variant="outline"
+                    onClick={() => {
+                      const codeSection = document.getElementById('code-templates');
+                      if (codeSection) {
+                        codeSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
                     <Github className="h-5 w-5 mr-3" />
                     View Code Templates
                   </Button>
-                  <Button className="w-full h-12 border-white/20 text-white hover:bg-white/10" variant="outline">
-                    <FileText className="h-5 w-5 mr-3" />
-                    Export Blueprint
-                  </Button>
-                  <Button className="w-full h-12 border-white/20 text-white hover:bg-white/10" variant="outline">
+                  
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full h-10 border-white/20 text-white hover:bg-white/10" 
+                      variant="outline"
+                      onClick={handleExportJSON}
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Export JSON
+                    </Button>
+                    <Button 
+                      className="w-full h-10 border-white/20 text-white hover:bg-white/10" 
+                      variant="outline"
+                      onClick={handleExportMarkdown}
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Export Markdown
+                    </Button>
+                  </div>
+                  
+                  <Button 
+                    className="w-full h-12 border-white/20 text-white hover:bg-white/10" 
+                    variant="outline"
+                    onClick={handleRegenerate}
+                    disabled={regenerating}
+                  >
                     <Brain className="h-5 w-5 mr-3" />
-                    Regenerate Analysis
+                    {regenerating ? 'Regenerating...' : 'Regenerate Analysis'}
+                  </Button>
+                  
+                  <Button 
+                    className="w-full h-12 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500" 
+                    variant="outline"
+                    onClick={handleDeleteBlueprint}
+                    disabled={deleting}
+                  >
+                    {deleting ? (
+                      <>
+                        <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="h-5 w-5 mr-3" />
+                        Delete Blueprint
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
 
               {/* Code Templates */}
-              {blueprint.codeTemplates.length > 0 && (
-                <div className="glass rounded-2xl p-6 border border-white/10">
+              {blueprint.codeTemplates && blueprint.codeTemplates.length > 0 && (
+                <div id="code-templates" className="glass rounded-2xl p-6 border border-white/10">
                                            <div className="flex items-center gap-3 mb-4">
                            <div className="p-2 rounded-lg bg-gradient-to-r from-blue-700 to-blue-900">
                              <Github className="h-4 w-4 text-white" />
@@ -406,7 +498,7 @@ export default function BlueprintDetailPage() {
                            <h3 className="text-lg font-semibold text-white">Code Templates</h3>
                          </div>
                   <div className="space-y-4">
-                    {blueprint.codeTemplates.map((template, index) => (
+                    {blueprint.codeTemplates?.map((template, index) => (
                       <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
                         <h4 className="font-medium text-white mb-2 text-sm">{template.name}</h4>
                         <p className="text-xs text-gray-300 mb-3 leading-relaxed">{template.description}</p>
