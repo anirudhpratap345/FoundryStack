@@ -17,66 +17,10 @@ interface Blueprint {
   status: string;
   createdAt: string;
   updatedAt: string;
-  marketAnalysis?: {
-    targetMarket: string;
-    competition: Array<{
-      name: string;
-      description: string;
-      strengths: string[];
-      weaknesses: string[];
-    }>;
-    positioning: string;
-    revenueModel: string;
-    marketSize: string;
-  };
-  technicalBlueprint?: {
-    architecture: string;
-    techStack: Array<{
-      category: string;
-      name: string;
-      version?: string;
-      rationale: string;
-    }>;
-    apiDesign: Array<{
-      endpoint: string;
-      method: string;
-      description: string;
-      requestSchema?: string;
-      responseSchema?: string;
-    }>;
-    databaseSchema: string;
-    deploymentStrategy: string;
-  };
-  implementationPlan?: {
-    totalWeeks: number;
-    sprints: Array<{
-      week: number;
-      title: string;
-      description: string;
-      tasks: Array<{
-        id: string;
-        title: string;
-        description: string;
-        estimatedHours: number;
-        priority: string;
-        dependencies: string[];
-      }>;
-      deliverables: string[];
-    }>;
-    milestones: Array<{
-      week: number;
-      title: string;
-      description: string;
-      criteria: string[];
-    }>;
-    deliverables: Array<{
-      name: string;
-      description: string;
-      type: string;
-      week: number;
-    }>;
-  };
-  codeTemplates: Array<{
+  marketAnalysis?: any;
+  technicalBlueprint?: any;
+  implementationPlan?: any;
+  codeTemplates?: Array<{
     name: string;
     description: string;
     language: string;
@@ -393,14 +337,14 @@ export default function BlueprintDetailPage() {
                            </h3>
                          </div>
                   <div className="space-y-8">
-                    {blueprint.implementationPlan.sprints.map((sprint, index) => (
+                    {blueprint.implementationPlan.sprints.map((sprint: any, index: number) => (
                       <div key={index} className="border-l-4 border-purple-500/50 pl-6">
                         <h4 className="font-semibold text-white mb-2 text-base">
                           Week {sprint.week}: {sprint.title}
                         </h4>
                         <p className="text-gray-300 mb-3 leading-relaxed text-sm">{sprint.description}</p>
                         <div className="space-y-3">
-                          {sprint.tasks.map((task) => (
+                          {sprint.tasks.map((task: any) => (
                             <div key={task.id} className="flex items-center gap-3 p-2 bg-white/5 rounded-lg border border-white/10">
                               <Circle className="h-3 w-3 text-gray-400" />
                               <span className="text-xs text-white flex-1">{task.title}</span>
@@ -498,7 +442,7 @@ export default function BlueprintDetailPage() {
                            <h3 className="text-lg font-semibold text-white">Code Templates</h3>
                          </div>
                   <div className="space-y-4">
-                    {blueprint.codeTemplates?.map((template, index) => (
+                    {blueprint.codeTemplates?.map((template: any, index: number) => (
                       <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
                         <h4 className="font-medium text-white mb-2 text-sm">{template.name}</h4>
                         <p className="text-xs text-gray-300 mb-3 leading-relaxed">{template.description}</p>

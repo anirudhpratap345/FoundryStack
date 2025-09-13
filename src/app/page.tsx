@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight, AlertCircle, CheckCircle } from "lucide-react";
+import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight, AlertCircle } from "lucide-react";
 import { createBlueprint } from "@/lib/api/client";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
-import { validateBlueprintIdea, validateBlueprintTitle } from "@/lib/validation";
+import { validateBlueprintIdea } from "@/lib/validation";
+import Link from "next/link";
 
 export default function Home() {
   const [idea, setIdea] = useState("");
@@ -153,13 +154,14 @@ export default function Home() {
       setTimeout(() => {
         window.location.href = '/blueprints';
       }, 1500);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to create blueprint:', error);
       
       // Handle different error types
-      if (error.message?.includes('Rate limit')) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (errorMessage.includes('Rate limit')) {
         setError("You're creating blueprints too quickly. Please wait a moment and try again.");
-      } else if (error.message?.includes('Validation failed')) {
+      } else if (errorMessage.includes('Validation failed')) {
         setError("Please check your input and try again.");
       } else {
         setError("Failed to create blueprint. Please try again.");
@@ -204,7 +206,7 @@ export default function Home() {
               className="hidden md:flex space-x-8"
             >
               <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-              <a href="/blueprints" className="text-gray-300 hover:text-white transition-colors">My Blueprints</a>
+              <Link href="/blueprints" className="text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
               <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
               <AnimatedButton variant="outline" size="sm">
                 Sign In
@@ -400,7 +402,7 @@ export default function Home() {
           className="text-center mb-16"
         >
           <h3 className="text-3xl font-bold text-white mb-4">
-            What You'll Get
+            What You&apos;ll Get
           </h3>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Comprehensive analysis and actionable implementation plans

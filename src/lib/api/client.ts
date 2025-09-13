@@ -163,7 +163,7 @@ export function exportBlueprintAsMarkdown(blueprint: Blueprint): void {
     
     if (blueprint.marketAnalysis.competition && blueprint.marketAnalysis.competition.length > 0) {
       markdown += `### Competition\n\n`;
-      blueprint.marketAnalysis.competition.forEach(comp => {
+      blueprint.marketAnalysis.competition.forEach((comp: any) => {
         markdown += `- **${comp.name}:** ${comp.description}\n`;
       });
       markdown += `\n`;
@@ -178,7 +178,7 @@ export function exportBlueprintAsMarkdown(blueprint: Blueprint): void {
     
     if (blueprint.technicalBlueprint.techStack && blueprint.technicalBlueprint.techStack.length > 0) {
       markdown += `### Tech Stack\n\n`;
-      blueprint.technicalBlueprint.techStack.forEach(tech => {
+      blueprint.technicalBlueprint.techStack.forEach((tech: any) => {
         markdown += `- **${tech.category}:** ${tech.name} ${tech.version} - ${tech.rationale}\n`;
       });
       markdown += `\n`;
@@ -191,12 +191,12 @@ export function exportBlueprintAsMarkdown(blueprint: Blueprint): void {
     
     if (blueprint.implementationPlan.sprints && blueprint.implementationPlan.sprints.length > 0) {
       markdown += `### Sprints\n\n`;
-      blueprint.implementationPlan.sprints.forEach(sprint => {
+      blueprint.implementationPlan.sprints.forEach((sprint: any) => {
         markdown += `#### Week ${sprint.week}: ${sprint.title}\n\n`;
         markdown += `${sprint.description}\n\n`;
         if (sprint.tasks && sprint.tasks.length > 0) {
           markdown += `**Tasks:**\n`;
-          sprint.tasks.forEach(task => {
+          sprint.tasks.forEach((task: any) => {
             markdown += `- ${task.title} (${task.estimatedHours}h) - ${task.priority}\n`;
           });
           markdown += `\n`;

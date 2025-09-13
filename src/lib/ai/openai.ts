@@ -871,7 +871,26 @@ Format as JSON with this comprehensive structure:
       console.error('Technical blueprint generation failed:', error);
       // Return fallback data
       return {
-        architecture: "Modern web application with React frontend and Node.js backend",
+        architecture: {
+          overview: "Modern web application with React frontend and Node.js backend",
+          pattern: "Microservices architecture",
+          components: [
+            {
+              name: "Frontend",
+              description: "React-based user interface",
+              technology: "Next.js",
+              scaling: "Horizontal scaling with CDN"
+            },
+            {
+              name: "Backend",
+              description: "API server and business logic",
+              technology: "Node.js",
+              scaling: "Container-based scaling"
+            }
+          ],
+          dataFlow: "RESTful API communication",
+          integration: "Third-party service integration"
+        },
         techStack: [
           {
             category: "Frontend",
@@ -891,12 +910,38 @@ Format as JSON with this comprehensive structure:
             endpoint: "/api/data",
             method: "GET",
             description: "Retrieve application data",
-            requestSchema: null,
+            requestSchema: undefined,
             responseSchema: "DataResponse"
           }
         ],
-        databaseSchema: "PostgreSQL with optimized tables for the application needs",
-        deploymentStrategy: "Docker containers with cloud deployment"
+        databaseSchema: {
+          overview: "PostgreSQL with optimized tables for the application needs",
+          tables: [
+            {
+              name: "users",
+              description: "User account information",
+              columns: [
+                {
+                  name: "id",
+                  type: "UUID",
+                  constraints: "PRIMARY KEY",
+                  description: "Unique user identifier"
+                },
+                {
+                  name: "email",
+                  type: "VARCHAR(255)",
+                  constraints: "UNIQUE NOT NULL",
+                  description: "User email address"
+                }
+              ],
+              indexes: ["idx_users_email"],
+              relationships: "One-to-many with blueprints"
+            }
+          ],
+          scaling: "Read replicas and connection pooling",
+          backup: "Daily automated backups",
+          migrations: "Version-controlled schema changes"
+        }
       };
     }
   }
