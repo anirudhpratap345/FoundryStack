@@ -1,4 +1,5 @@
 import { AIProviderFactory, AIProvider } from './providers';
+import { retrieverClient } from './retriever-client';
 
 // Use the provider factory to get the appropriate AI provider
 // Initialize lazily to avoid module-level execution issues
@@ -345,7 +346,7 @@ export class AIBlueprintGenerator {
     }
   }
 
-  async generateMarketAnalysis(idea: string, title: string): Promise<MarketAnalysis> {
+  async generateMarketAnalysis(idea: string, title: string, context?: any): Promise<MarketAnalysis> {
     // Extract the actual business concept from the idea
     const businessConcept = idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
     
@@ -678,7 +679,7 @@ Format as JSON with this comprehensive structure:
     };
   }
 
-  async generateTechnicalBlueprint(idea: string, marketAnalysis: MarketAnalysis): Promise<TechnicalBlueprint> {
+  async generateTechnicalBlueprint(idea: string, marketAnalysis: MarketAnalysis, context?: any): Promise<TechnicalBlueprint> {
     // Extract the actual business concept from the idea
     const businessConcept = idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
     
@@ -948,7 +949,8 @@ Format as JSON with this comprehensive structure:
 
   async generateImplementationPlan(
     idea: string, 
-    technicalBlueprint: TechnicalBlueprint
+    technicalBlueprint: TechnicalBlueprint,
+    context?: any
   ): Promise<ImplementationPlan> {
     // Extract the actual business concept from the idea
     const businessConcept = idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
@@ -1053,7 +1055,8 @@ Format as JSON with this comprehensive structure:
 
   async generateCodeTemplates(
     idea: string,
-    technicalBlueprint: TechnicalBlueprint
+    technicalBlueprint: TechnicalBlueprint,
+    context?: any
   ): Promise<CodeTemplate[]> {
     const prompt = `
     Generate starter code templates for the following startup:
@@ -1097,21 +1100,27 @@ Format as JSON with this comprehensive structure:
     try {
       console.log('Starting blueprint generation for:', request.title);
       
+      // Step 0: Retrieve and enrich context using Python Retriever Agent
+      console.log('🔍 Enriching query with Python Retriever Agent...');
+      const retrieverResponse = await retrieverClient.enrichQuery(request.idea);
+      const { enriched_query: enrichedQuery, context, processing_time } = retrieverResponse;
+      console.log(`✅ Context enriched with confidence: ${(context.confidence * 100).toFixed(1)}% (${processing_time.toFixed(2)}s)`);
+      
       // Step 1: Market Analysis
       console.log('Generating market analysis...');
-      const marketAnalysis = await this.generateMarketAnalysis(request.idea, request.title);
+      const marketAnalysis = await this.generateMarketAnalysis(enrichedQuery, request.title, context);
       
       // Step 2: Technical Blueprint
       console.log('Generating technical blueprint...');
-      const technicalBlueprint = await this.generateTechnicalBlueprint(request.idea, marketAnalysis);
+      const technicalBlueprint = await this.generateTechnicalBlueprint(enrichedQuery, marketAnalysis, context);
       
       // Step 3: Implementation Plan
       console.log('Generating implementation plan...');
-      const implementationPlan = await this.generateImplementationPlan(request.idea, technicalBlueprint);
+      const implementationPlan = await this.generateImplementationPlan(enrichedQuery, technicalBlueprint, context);
       
       // Step 4: Code Templates
       console.log('Generating code templates...');
-      const codeTemplates = await this.generateCodeTemplates(request.idea, technicalBlueprint);
+      const codeTemplates = await this.generateCodeTemplates(enrichedQuery, technicalBlueprint, context);
       
       console.log('Blueprint generation completed successfully');
       
