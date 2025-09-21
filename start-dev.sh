@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Development startup script for FoundryStack with Python Retriever Agent
+# Development startup script for FoundryStack with Python AI Agents
 
 echo "🚀 Starting FoundryStack Development Environment..."
 
@@ -16,17 +16,78 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# Create virtual environment for Python if it doesn't exist
+# Create virtual environments for Python agents if they don't exist
+echo "📦 Setting up Python virtual environments..."
+
+# Retriever Agent
 if [ ! -d "python-retriever/venv" ]; then
-    echo "📦 Creating Python virtual environment..."
+    echo "📦 Creating Retriever Agent virtual environment..."
     cd python-retriever
     python3 -m venv venv
     cd ..
 fi
 
-# Activate virtual environment and install dependencies
+# Analyst Agent
+if [ ! -d "analyst-agent/venv" ]; then
+    echo "📦 Creating Analyst Agent virtual environment..."
+    cd analyst-agent
+    python3 -m venv venv
+    cd ..
+fi
+
+# Writer Agent
+if [ ! -d "writer-agent/venv" ]; then
+    echo "📦 Creating Writer Agent virtual environment..."
+    cd writer-agent
+    python3 -m venv venv
+    cd ..
+fi
+
+# Reviewer Agent
+if [ ! -d "reviewer-agent/venv" ]; then
+    echo "📦 Creating Reviewer Agent virtual environment..."
+    cd reviewer-agent
+    python3 -m venv venv
+    cd ..
+fi
+
+# Exporter Agent
+if [ ! -d "exporter-agent/venv" ]; then
+    echo "📦 Creating Exporter Agent virtual environment..."
+    cd exporter-agent
+    python3 -m venv venv
+    cd ..
+fi
+
+# Install Python dependencies
 echo "📦 Installing Python dependencies..."
+
+# Retriever Agent
 cd python-retriever
+source venv/bin/activate
+pip install -r requirements.txt
+cd ..
+
+# Analyst Agent
+cd analyst-agent
+source venv/bin/activate
+pip install -r requirements.txt
+cd ..
+
+# Writer Agent
+cd writer-agent
+source venv/bin/activate
+pip install -r requirements.txt
+cd ..
+
+# Reviewer Agent
+cd reviewer-agent
+source venv/bin/activate
+pip install -r requirements.txt
+cd ..
+
+# Exporter Agent
+cd exporter-agent
 source venv/bin/activate
 pip install -r requirements.txt
 cd ..
@@ -35,24 +96,93 @@ cd ..
 echo "📦 Installing Node.js dependencies..."
 npm install
 
-# Start Python Retriever Agent in background
-echo "🐍 Starting Python Retriever Agent..."
+# Start Python AI Agents in background
+echo "🐍 Starting Python AI Agents..."
+
+# Start Retriever Agent
+echo "🔍 Starting Retriever Agent..."
 cd python-retriever
 source venv/bin/activate
 python main.py &
 RETRIEVER_PID=$!
 cd ..
 
-# Wait for Python service to start
-echo "⏳ Waiting for Python Retriever Agent to start..."
-sleep 5
+# Start Analyst Agent
+echo "📊 Starting Analyst Agent..."
+cd analyst-agent
+source venv/bin/activate
+python main.py &
+ANALYST_PID=$!
+cd ..
 
-# Check if Python service is running
+# Start Writer Agent
+echo "✍️ Starting Writer Agent..."
+cd writer-agent
+source venv/bin/activate
+python main.py &
+WRITER_PID=$!
+cd ..
+
+# Start Reviewer Agent
+echo "🔍 Starting Reviewer Agent..."
+cd reviewer-agent
+source venv/bin/activate
+python main.py &
+REVIEWER_PID=$!
+cd ..
+
+# Start Exporter Agent
+echo "📤 Starting Exporter Agent..."
+cd exporter-agent
+source venv/bin/activate
+python main.py &
+EXPORTER_PID=$!
+cd ..
+
+# Wait for Python services to start
+echo "⏳ Waiting for Python AI Agents to start..."
+sleep 10
+
+# Check if all Python services are running
+echo "🔍 Checking service health..."
+
 if curl -f http://localhost:8000/health > /dev/null 2>&1; then
-    echo "✅ Python Retriever Agent is running on http://localhost:8000"
+    echo "✅ Retriever Agent is running on http://localhost:8000"
 else
-    echo "❌ Failed to start Python Retriever Agent"
-    kill $RETRIEVER_PID 2>/dev/null
+    echo "❌ Failed to start Retriever Agent"
+    kill $RETRIEVER_PID $ANALYST_PID $WRITER_PID 2>/dev/null
+    exit 1
+fi
+
+if curl -f http://localhost:8002/health > /dev/null 2>&1; then
+    echo "✅ Analyst Agent is running on http://localhost:8002"
+else
+    echo "❌ Failed to start Analyst Agent"
+    kill $RETRIEVER_PID $ANALYST_PID $WRITER_PID 2>/dev/null
+    exit 1
+fi
+
+if curl -f http://localhost:8003/health > /dev/null 2>&1; then
+    echo "✅ Writer Agent is running on http://localhost:8003"
+else
+    echo "❌ Failed to start Writer Agent"
+    kill $RETRIEVER_PID $ANALYST_PID $WRITER_PID $REVIEWER_PID 2>/dev/null
+    exit 1
+fi
+
+if curl -f http://localhost:8004/health > /dev/null 2>&1; then
+    echo "✅ Reviewer Agent is running on http://localhost:8004"
+else
+    echo "❌ Failed to start Reviewer Agent"
+    kill $RETRIEVER_PID $ANALYST_PID $WRITER_PID $REVIEWER_PID $EXPORTER_PID 2>/dev/null
+    exit 1
+fi
+
+if curl -f http://localhost:8005/health > /dev/null 2>&1; then
+    echo "✅ Exporter Agent is running on http://localhost:8005"
+else
+    echo "❌ Failed to start Exporter Agent"
+    kill $RETRIEVER_PID $ANALYST_PID $WRITER_PID $REVIEWER_PID $EXPORTER_PID 2>/dev/null
     exit 1
 fi
 
@@ -80,11 +210,15 @@ echo "🎉 FoundryStack Development Environment is ready!"
 echo ""
 echo "📊 Services:"
 echo "  - Next.js App: http://localhost:3000"
-echo "  - Python Retriever: http://localhost:8000"
+echo "  - Retriever Agent: http://localhost:8000"
+echo "  - Analyst Agent: http://localhost:8002"
+echo "  - Writer Agent: http://localhost:8003"
+echo "  - Reviewer Agent: http://localhost:8004"
+echo "  - Exporter Agent: http://localhost:8005"
 echo "  - API Docs: http://localhost:8000/docs"
 echo ""
-echo "🧪 Test the Python Retriever:"
-echo "  curl -X POST http://localhost:8000/enrich -H 'Content-Type: application/json' -d '{\"query\":\"create a blueprint for AI fintech startup\"}'"
+echo "🧪 Test the complete 5-agent pipeline:"
+echo "  python test-complete-5-agent-pipeline.py"
 echo ""
 echo "Press Ctrl+C to stop all services"
 
@@ -93,6 +227,10 @@ cleanup() {
     echo ""
     echo "🛑 Stopping services..."
     kill $RETRIEVER_PID 2>/dev/null
+    kill $ANALYST_PID 2>/dev/null
+    kill $WRITER_PID 2>/dev/null
+    kill $REVIEWER_PID 2>/dev/null
+    kill $EXPORTER_PID 2>/dev/null
     kill $NEXTJS_PID 2>/dev/null
     echo "✅ All services stopped"
     exit 0

@@ -207,6 +207,7 @@ export default function Home() {
             >
               <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
               <Link href="/blueprints" className="text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
+              <Link href="/test-pipeline" className="text-gray-300 hover:text-white transition-colors">Test Pipeline</Link>
               <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
               <AnimatedButton variant="outline" size="sm">
                 Sign In
