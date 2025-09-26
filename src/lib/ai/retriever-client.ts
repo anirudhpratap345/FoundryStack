@@ -73,7 +73,7 @@ export class PythonRetrieverClient {
   private baseUrl: string;
   private timeout: number;
 
-  constructor(baseUrl: string = 'http://localhost:8000', timeout: number = 30000) {
+  constructor(baseUrl: string = '/api/retriever', timeout: number = 30000) {
     this.baseUrl = baseUrl;
     this.timeout = timeout;
   }
@@ -85,7 +85,7 @@ export class PythonRetrieverClient {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
-      const response = await fetch(`${this.baseUrl}/enrich`, {
+      const response = await fetch(this.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

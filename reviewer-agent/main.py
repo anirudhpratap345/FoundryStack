@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
 import json
@@ -9,6 +10,15 @@ app = FastAPI(
     title="FoundryStack Reviewer Agent",
     description="Reviews and refines AI-generated blueprints for technical correctness and quality",
     version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Specific origins for development
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 # Pydantic Models
@@ -362,6 +372,11 @@ async def health_check():
         ],
         "supported_industries": ["fintech", "healthcare", "general"]
     }
+
+@app.options("/review")
+async def review_options():
+    """Handle CORS preflight for review endpoint"""
+    return {"message": "OK"}
 
 @app.post("/review", response_model=ReviewResponse)
 async def review_blueprint(request: ReviewRequest):

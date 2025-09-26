@@ -22,7 +22,8 @@ class WriterClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.WRITER_AGENT_URL || 'http://localhost:8003';
+    // Use Next.js API route to avoid CORS issues
+    this.baseUrl = '/api/writer';
   }
 
   /**
@@ -30,7 +31,7 @@ class WriterClient {
    */
   async generateContent(request: WriterRequest): Promise<WriterResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/write`, {
+      const response = await fetch(this.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

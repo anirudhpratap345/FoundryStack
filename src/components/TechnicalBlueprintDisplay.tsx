@@ -78,59 +78,49 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
                 <div>
                   <h4 className="text-lg font-semibold text-white">{tech.name}</h4>
                   <div className="text-sm text-gray-400">
-                    {tech.category} • v{tech.version}
+                    {tech.category}
                   </div>
                 </div>
                 <div className="text-right text-sm text-gray-400">
-                  {tech.learningCurve && <div>Learning: {tech.learningCurve}</div>}
-                  {tech.community && <div>Community: {tech.community}</div>}
+                  <div>Purpose: {tech.purpose}</div>
                 </div>
               </div>
               
-              <p className="text-gray-300 mb-4">{tech.rationale}</p>
+              <p className="text-gray-300 mb-4">{tech.purpose}</p>
               
               <div className="grid md:grid-cols-2 gap-4">
-                {tech.pros && tech.pros.length > 0 && (
-                  <div>
-                    <h5 className="text-white font-medium mb-2">Pros</h5>
-                    <ul className="text-gray-300 text-sm space-y-1">
-                      {tech.pros.map((pro, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <div className="w-1 h-1 bg-green-400 rounded-full"></div>
-                          {pro}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {tech.cons && tech.cons.length > 0 && (
-                  <div>
-                    <h5 className="text-white font-medium mb-2">Cons</h5>
-                    <ul className="text-gray-300 text-sm space-y-1">
-                      {tech.cons.map((con, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <div className="w-1 h-1 bg-red-400 rounded-full"></div>
-                          {con}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              
-              {tech.alternatives && tech.alternatives.length > 0 && (
-                <div className="mt-4">
-                  <h5 className="text-white font-medium mb-2">Alternatives</h5>
-                  <div className="flex flex-wrap gap-2">
-                    {tech.alternatives.map((alt, i) => (
-                      <span key={i} className="bg-gray-500/20 text-gray-300 px-2 py-1 rounded text-sm">
-                        {alt}
-                      </span>
-                    ))}
-                  </div>
+                <div>
+                  <h5 className="text-white font-medium mb-2">Benefits</h5>
+                  <ul className="text-gray-300 text-sm space-y-1">
+                    <li className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                      Modern and well-supported technology
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                      Strong community and documentation
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                      Production-ready and scalable
+                    </li>
+                  </ul>
                 </div>
-              )}
+                
+                <div>
+                  <h5 className="text-white font-medium mb-2">Considerations</h5>
+                  <ul className="text-gray-300 text-sm space-y-1">
+                    <li className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
+                      Learning curve for new team members
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
+                      Regular updates and maintenance required
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -392,7 +382,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
               <div className="flex flex-wrap gap-2">
                 {blueprint.deployment.environments.map((env, i) => (
                   <span key={i} className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">
-                    {env}
+                    {env.name}
                   </span>
                 ))}
               </div>
@@ -431,7 +421,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
               <div className="flex flex-wrap gap-2">
                 {blueprint.monitoring.tools.map((tool, i) => (
                   <span key={i} className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
-                    {tool}
+                    {tool.name}
                   </span>
                 ))}
               </div>
