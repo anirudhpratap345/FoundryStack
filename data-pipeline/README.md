@@ -8,15 +8,33 @@ This pipeline crawls, processes, and embeds documents from multiple sources to c
 
 1. **Crawler** - Collects documents from news sites, startup directories, and tech docs
 2. **Chunker** - Splits documents into semantic chunks with overlap
-3. **Embedder** - Generates embeddings using sentence-transformers and stores in pgvector
+3. **Embedder** - Generates embeddings using sentence-transformers and stores in Qdrant
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Python 3.8+
-- Supabase account with pgvector enabled
+- Qdrant (local Docker or cloud account)
 - Environment variables set (see Configuration)
+
+### Quick Setup
+
+**Option 1: Local Qdrant (Recommended)**
+```bash
+# Start Qdrant with Docker
+docker run -d -p 6333:6333 -p 6334:6334 qdrant/qdrant
+
+# Test connection
+python data-pipeline/test_qdrant.py
+```
+
+**Option 2: Qdrant Cloud**
+```bash
+# Sign up at https://qdrant.tech
+# Get your cluster URL and API key
+# Set environment variables in Configuration section
+```
 
 ### Installation
 
@@ -38,23 +56,19 @@ pip install -r requirements.txt
 Set these environment variables:
 
 ```bash
-# Supabase Configuration
-export SUPABASE_HOST="your-project.supabase.co"
-export SUPABASE_DB="postgres"
-export SUPABASE_USER="postgres"
-export SUPABASE_PASSWORD="your-password"
-export SUPABASE_PORT="5432"
+# Qdrant Configuration (optional - defaults to localhost)
+export QDRANT_URL="http://localhost:6333"  # or your cloud URL
+export QDRANT_API_KEY="your-api-key"        # for Qdrant Cloud only
 ```
 
 Or create a `.env` file:
 
 ```env
-SUPABASE_HOST=your-project.supabase.co
-SUPABASE_DB=postgres
-SUPABASE_USER=postgres
-SUPABASE_PASSWORD=your-password
-SUPABASE_PORT=5432
+QDRANT_URL=http://localhost:6333
+QDRANT_API_KEY=your-api-key  # Only needed for Qdrant Cloud
 ```
+
+**Note:** No complex database setup required! Qdrant handles all vector operations automatically.
 
 ### Run Complete Pipeline
 

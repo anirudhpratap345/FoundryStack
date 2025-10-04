@@ -5,6 +5,7 @@ import { analystClient } from '@/lib/ai/analyst-client';
 import { writerClient } from '@/lib/ai/writer-client';
 import { reviewerClient } from '@/lib/ai/reviewer-client';
 import { exporterClient } from '@/lib/ai/exporter-client';
+import { BlueprintCache, PipelineCache, generateQueryHash } from '@/lib/redis/cache';
 
 // GET /api/blueprints/[id] - Get a specific blueprint
 export async function GET(
@@ -13,6 +14,14 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    
+    // Check cache first
+    const cachedBlueprint = await BlueprintCache.getBlueprint(id);
+    if (cachedBlueprint) {
+      console.log(`Returning cached blueprint: ${id}`);
+      return NextResponse.json({ blueprint: cachedBlueprint });
+    }
+    
     let blueprint;
     
     try {
@@ -333,6 +342,9 @@ export async function GET(
       updatedAt: blueprint.updated_at
     };
 
+    // Cache the transformed blueprint
+    await BlueprintCache.cacheBlueprint(id, transformedBlueprint);
+
     return NextResponse.json({ blueprint: transformedBlueprint });
   } catch (error) {
     console.error('Failed to fetch blueprint:', error);
@@ -409,6 +421,37 @@ export async function POST(
     try {
       // Extract business concept from the idea
       const businessConcept = blueprint.idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
+      
+      // Generate query hash for caching
+      const queryHash = generateQueryHash(businessConcept);
+      
+      // Check if we have cached pipeline results
+      const cachedPipeline = await PipelineCache.getPipeline(queryHash);
+      if (cachedPipeline) {
+        console.log('Using cached pipeline results for regeneration');
+        
+        // Update blueprint with cached results
+        await BlueprintService.update(id, {
+          market_analysis: cachedPipeline.market_analysis,
+          technical_blueprint: cachedPipeline.technical_blueprint,
+          implementation_plan: cachedPipeline.implementation_plan,
+          code_templates: cachedPipeline.code_templates,
+          status: 'COMPLETED'
+        });
+        
+        // Invalidate blueprint cache
+        await BlueprintCache.invalidateBlueprint(id);
+        await BlueprintCache.invalidateBlueprint('blueprints:all');
+        
+        return NextResponse.json({
+          message: 'Blueprint regenerated successfully with cached multi-agent system',
+          blueprint: {
+            id,
+            status: 'COMPLETED',
+            cached: true
+          }
+        });
+      }
       
       // Step 1: Retriever Agent - Enrich query with context
       const retrieverResult = await retrieverClient.enrichQuery(businessConcept);
@@ -657,6 +700,10 @@ export async function POST(
         code_templates: exporterResult.files || []
       };
 
+      // Cache the pipeline results for future use
+      await PipelineCache.cachePipeline(queryHash, comprehensiveBlueprint);
+      console.log(`Cached pipeline results for regeneration query hash: ${queryHash}`);
+
       // Update blueprint with multi-agent generated content
       let updatedBlueprint;
       try {
@@ -680,6 +727,10 @@ export async function POST(
           updated_at: new Date().toISOString()
         };
       }
+
+      // Invalidate blueprint cache
+      await BlueprintCache.invalidateBlueprint(id);
+      await BlueprintCache.invalidateBlueprint('blueprints:all');
 
       return NextResponse.json({ 
         success: true, 

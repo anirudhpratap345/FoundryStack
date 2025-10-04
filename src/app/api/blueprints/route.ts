@@ -7,10 +7,20 @@ import { analystClient } from '@/lib/ai/analyst-client';
 import { writerClient } from '@/lib/ai/writer-client';
 import { reviewerClient } from '@/lib/ai/reviewer-client';
 import { exporterClient } from '@/lib/ai/exporter-client';
+import { BlueprintCache, PipelineCache, RateLimiter, generateQueryHash } from '@/lib/redis/cache';
 
 // GET /api/blueprints - Get all blueprints
 export async function GET() {
   try {
+    // Check cache first
+    const cacheKey = 'blueprints:all';
+    const cachedBlueprints = await BlueprintCache.getBlueprint(cacheKey);
+    
+    if (cachedBlueprints) {
+      console.log('Returning cached blueprints');
+      return NextResponse.json({ blueprints: cachedBlueprints });
+    }
+
     let blueprints;
     try {
       blueprints = await BlueprintService.getAll();
@@ -325,6 +335,9 @@ export async function GET() {
       updatedAt: blueprint.updated_at
     }));
 
+    // Cache the transformed blueprints
+    await BlueprintCache.cacheBlueprint(cacheKey, transformedBlueprints);
+
     return NextResponse.json({ blueprints: transformedBlueprints });
   } catch (error) {
     console.error('Failed to fetch blueprints:', error);
@@ -340,13 +353,16 @@ export async function POST(request: NextRequest) {
   try {
     console.log('POST /api/blueprints - Starting blueprint creation');
     
-    // Rate limiting
+    // Redis-based rate limiting
     const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-    if (!rateLimiter.isAllowed(clientIP)) {
+    const rateLimitResult = await RateLimiter.checkRateLimit(clientIP, 'blueprints:create', 10); // 10 requests per hour
+    
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { 
           error: 'Rate limit exceeded. Please try again later.',
-          retryAfter: Math.ceil((rateLimiter.getResetTime(clientIP) - Date.now()) / 1000)
+          retryAfter: Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000),
+          remaining: rateLimitResult.remaining
         },
         { status: 429 }
       );
@@ -414,6 +430,34 @@ export async function POST(request: NextRequest) {
         try {
           // Extract business concept from the idea
           const businessConcept = idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
+          
+          // Generate query hash for caching
+          const queryHash = generateQueryHash(businessConcept);
+          
+          // Check if we have cached pipeline results
+          const cachedPipeline = await PipelineCache.getPipeline(queryHash);
+          if (cachedPipeline) {
+            console.log('Using cached pipeline results');
+            
+            // Update blueprint with cached results
+            try {
+              await BlueprintService.update(newBlueprint.id, {
+                market_analysis: cachedPipeline.market_analysis,
+                technical_blueprint: cachedPipeline.technical_blueprint,
+                implementation_plan: cachedPipeline.implementation_plan,
+                code_templates: cachedPipeline.code_templates,
+                status: 'COMPLETED'
+              });
+            } catch (updateError) {
+              console.error('Failed to update blueprint with cached results:', updateError);
+            }
+            
+            // Invalidate blueprints cache to refresh the list
+            await BlueprintCache.invalidateBlueprint('blueprints:all');
+            
+            console.log(`Multi-agent blueprint generation completed for ${newBlueprint.id} (from cache)`);
+            return;
+          }
           
           // Step 1: Retriever Agent - Enrich query with context
           console.log('Step 1: Enriching query with context...');
@@ -667,6 +711,10 @@ export async function POST(request: NextRequest) {
             code_templates: exporterResult.files || []
           };
 
+          // Cache the pipeline results for future use
+          await PipelineCache.cachePipeline(queryHash, comprehensiveBlueprint);
+          console.log(`Cached pipeline results for query hash: ${queryHash}`);
+
           // Update blueprint with multi-agent generated content
           try {
             await BlueprintService.update(newBlueprint.id, {
@@ -680,6 +728,9 @@ export async function POST(request: NextRequest) {
             console.error('Failed to update blueprint in database:', updateError);
             // Continue without database update for mock blueprints
           }
+
+          // Invalidate blueprints cache to refresh the list
+          await BlueprintCache.invalidateBlueprint('blueprints:all');
 
           console.log(`Multi-agent blueprint generation completed for ${newBlueprint.id}`);
         } catch (error) {

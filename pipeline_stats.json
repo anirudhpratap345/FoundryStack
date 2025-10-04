@@ -1,0 +1,11 @@
+{
+  "start_time": "2025-10-04T19:24:47.622063",
+  "steps_completed": [
+    "crawler",
+    "chunker",
+    "embedder"
+  ],
+  "errors": [],
+  "end_time": "2025-10-04T19:24:58.058041",
+  "success": true
+}

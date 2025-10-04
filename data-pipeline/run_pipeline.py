@@ -16,7 +16,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from crawler.enhanced_crawler import EnhancedCrawler
 from chunker import process_documents, validate_chunks
-from embedder import DocumentEmbedder, process_chunks_file
+from qdrant_embedder import QdrantDocumentEmbedder
 
 
 class RAGPipeline:
@@ -142,23 +142,23 @@ class RAGPipeline:
             return False
         
         try:
+            # Initialize Qdrant embedder
+            embedder = QdrantDocumentEmbedder()
+            
             # Check if we should skip embedding (data already exists)
             if not force:
-                embedder = DocumentEmbedder()
-                try:
-                    db_stats = embedder.get_database_stats()
-                    if db_stats.get("total_documents", 0) > 0:
-                        print(f"Database already contains {db_stats['total_documents']} documents. Use --force to re-embed.")
-                        self.pipeline_stats["steps_completed"].append("embedder")
-                        return True
-                finally:
-                    embedder.close()
+                stats = embedder.get_collection_stats()
+                if stats.get("vectors_count", 0) > 0:
+                    print(f"Qdrant already contains {stats['vectors_count']} documents. Use --force to re-embed.")
+                    self.pipeline_stats["steps_completed"].append("embedder")
+                    return True
             
             # Process chunks
-            stats = process_chunks_file(chunks_file)
+            success = embedder.embed_documents(chunks_file)
             
-            if stats.get("processed", 0) > 0:
-                print(f"✅ Embedding completed: {stats['processed']} chunks embedded")
+            if success:
+                stats = embedder.get_collection_stats()
+                print(f"✅ Embedding completed: {stats.get('vectors_count', 0)} vectors stored")
                 self.pipeline_stats["steps_completed"].append("embedder")
                 return True
             else:
@@ -189,20 +189,17 @@ class RAGPipeline:
             if not validate_chunks("chunks.json"):
                 validation_passed = False
         
-        # Validate database
+        # Validate Qdrant collection
         try:
-            embedder = DocumentEmbedder()
-            try:
-                db_stats = embedder.get_database_stats()
-                if db_stats.get("total_documents", 0) == 0:
-                    print("❌ Database validation failed: No documents found")
-                    validation_passed = False
-                else:
-                    print(f"✅ Database validation passed: {db_stats['total_documents']} documents")
-            finally:
-                embedder.close()
+            embedder = QdrantDocumentEmbedder()
+            stats = embedder.get_collection_stats()
+            if stats.get("vectors_count", 0) == 0:
+                print("❌ Qdrant validation failed: No documents found")
+                validation_passed = False
+            else:
+                print(f"✅ Qdrant validation passed: {stats['vectors_count']} vectors")
         except Exception as e:
-            print(f"❌ Database validation failed: {e}")
+            print(f"❌ Qdrant validation failed: {e}")
             validation_passed = False
         
         return validation_passed

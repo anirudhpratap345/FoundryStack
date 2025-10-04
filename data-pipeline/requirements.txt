@@ -1,5 +1,5 @@
 # Data Pipeline Requirements
-# For RAG pipeline: crawler -> chunker -> embedder -> pgvector
+# For RAG pipeline: crawler -> chunker -> embedder -> qdrant
 
 # Web scraping and content extraction
 requests>=2.32.0
@@ -15,9 +15,8 @@ transformers>=4.30.0
 torch>=2.0.0
 numpy>=1.24.0
 
-# Database connectivity
-psycopg2-binary>=2.9.7
-psycopg2>=2.9.7
+# Vector database
+qdrant-client>=1.7.0
 
 # Utilities
 python-dotenv>=1.0.0

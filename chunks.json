@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "total_documents": 8,
-    "crawl_timestamp": "2025-10-03T19:30:44.067990",
+    "total_documents": 9,
+    "crawl_timestamp": "2025-10-04T19:10:29.759160",
     "sources": [
       "FastAPI",
       "Next.js",
@@ -13,22 +13,22 @@
       "documentation"
     ],
     "processing_stats": {
-      "total_documents": 8,
-      "total_chunks": 11,
+      "total_documents": 9,
+      "total_chunks": 12,
       "chunks_by_source": {
         "Next.js": 1,
         "Supabase": 1,
         "Prisma": 1,
         "FastAPI": 7,
-        "Redis": 1
+        "Redis": 2
       },
       "chunks_by_type": {
-        "documentation": 11
+        "documentation": 12
       },
-      "average_chunks_per_doc": 1.375,
+      "average_chunks_per_doc": 1.3333333333333333,
       "chunk_size": 500,
       "overlap": 50,
-      "processed_at": "2025-10-04T19:20:46.781314"
+      "processed_at": "2025-10-04T19:10:29.790988"
     }
   },
   "chunks": [
@@ -42,9 +42,9 @@
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 360,
-      "chunked_at": "2025-10-04T19:20:46.781314",
+      "chunked_at": "2025-10-04T19:10:29.790988",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:19.539169"
+      "crawled_at": "2025-10-04T19:10:10.218457"
     },
     {
       "id": "4db9941852a8_chunk_0",
@@ -56,9 +56,9 @@
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 204,
-      "chunked_at": "2025-10-04T19:20:46.783920",
+      "chunked_at": "2025-10-04T19:10:29.790988",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:25.275176"
+      "crawled_at": "2025-10-04T19:10:10.766991"
     },
     {
       "id": "60aeb992b71e_chunk_0",
@@ -70,9 +70,9 @@
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 442,
-      "chunked_at": "2025-10-04T19:20:46.783920",
+      "chunked_at": "2025-10-04T19:10:29.792113",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:30.118302"
+      "crawled_at": "2025-10-04T19:10:15.639506"
     },
     {
       "id": "5fc07527cb48_chunk_0",
@@ -84,9 +84,9 @@
       "chunk_index": 0,
       "total_chunks": 3,
       "word_count": 500,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.792113",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:34.776155"
+      "crawled_at": "2025-10-04T19:10:20.315954"
     },
     {
       "id": "5fc07527cb48_chunk_1",
@@ -98,9 +98,9 @@
       "chunk_index": 1,
       "total_chunks": 3,
       "word_count": 500,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.792113",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:34.776155"
+      "crawled_at": "2025-10-04T19:10:20.315954"
     },
     {
       "id": "5fc07527cb48_chunk_2",
@@ -112,65 +112,65 @@
       "chunk_index": 2,
       "total_chunks": 3,
       "word_count": 324,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.792113",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:34.776155"
+      "crawled_at": "2025-10-04T19:10:20.315954"
     },
     {
-      "id": "8f0b60f8f92c_chunk_0",
-      "parent_id": "8f0b60f8f92c",
+      "id": "1a774cf0c4d7_chunk_0",
+      "parent_id": "1a774cf0c4d7",
       "source": "FastAPI",
       "url": "https://fastapi.tiangolo.com/tutorial/",
-      "title": "FastAPI - /tutorial/",
+      "title": "FastAPI - tutorial/",
       "content": "Tutorial - User Guide¶This tutorial shows you how to useFastAPIwith most of its features, step by step.Each section gradually builds on the previous ones, but it's structured to separate topics, so that you can go directly to any specific one to solve your specific API needs.It is also built to work as a future reference so you can come back and see exactly what you need.Run the code¶All the code blocks can be copied and used directly (they are actually tested Python files).To run any of the examples, copy the code to a filemain.py, and startfastapi devwith:$<fontcolor=\"#4E9A06\">fastapi</font>dev<ustyle=\"text-decoration-style:solid\">main.py</u><span style=\"background-color:#009485\"><font color=\"#D3D7CF\"> FastAPI </font></span> Starting development server 🚀Searching for package file structure from directorieswith <font color=\"#3465A4\">__init__.py</font> filesImporting from <font color=\"#75507B\">/home/user/code/</font><font color=\"#AD7FA8\">awesomeapp</font><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> module </font></span> 🐍 main.py<span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> code </font></span> Importing the FastAPI app object from the module withthe following code:<u style=\"text-decoration-style:solid\">from </u><u style=\"text-decoration-style:solid\"><b>main</b></u><u style=\"text-decoration-style:solid\"> import </u><u style=\"text-decoration-style:solid\"><b>app</b></u><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> app </font></span> Using import string: <font color=\"#3465A4\">main:app</font><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> server </font></span> Server started at <font color=\"#729FCF\"><u style=\"text-decoration-style:solid\">http://127.0.0.1:8000</u></font><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> server </font></span> Documentation at <font color=\"#729FCF\"><u style=\"text-decoration-style:solid\">http://127.0.0.1:8000/docs</u></font><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> tip </font></span> Running in development mode, for production use:<b>fastapi run</b>Logs:<span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Will watch for changes in these directories:<b>[</b><font color=\"#4E9A06\">&apos;/home/user/code/awesomeapp&apos;</font><b>]</b><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Uvicorn running on <font color=\"#729FCF\"><u style=\"text-decoration-style:solid\">http://127.0.0.1:8000</u></font> <b>(</b>Press CTRL+Cto quit<b>)</b><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Started reloader process <b>[</b><font color=\"#34E2E2\"><b>383138</b></font><b>]</b> using WatchFiles<span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Started server process <b>[</b><font color=\"#34E2E2\"><b>383153</b></font><b>]</b><span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Waiting for application startup.<span style=\"background-color:#007166\"><font color=\"#D3D7CF\"> INFO </font></span> Application startup complete.It isHIGHLY encouragedthat you write or copy the code, edit it and run it locally.Using it in your editor is what really shows you the benefits of FastAPI, seeing how little code you have to write, all the type checks, autocompletion, etc.Install FastAPI¶The first step is to install FastAPI.Make sure you create avirtual environment, activate it, and theninstall FastAPI:$pipinstall\"fastapi[standard]\"---> 100%NoteWhen you install withpip install \"fastapi[standard]\"it comes with some default optional standard dependencies, includingfastapi-cloud-cli, which allows you to deploy toFastAPI Cloud.If you don't want to have those optional dependencies, you can instead installpip install fastapi.If you want to install the standard dependencies but without thefastapi-cloud-cli, you can install withpip install \"fastapi[standard-no-fastapi-cloud-cli]\".Advanced User Guide¶There is also anAdvanced User Guidethat you can read later after thisTutorial - User guide.TheAdvanced User Guidebuilds on this one, uses the same concepts, and teaches you some extra features.But you should first read theTutorial - User Guide(what you are reading right now).It's designed so that you can build a complete application with just theTutorial - User Guide, and then extend it in different ways, depending on your needs, using some of the additional ideas from theAdvanced User Guide.Back to top",
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 437,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.793159",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:34.875403"
+      "crawled_at": "2025-10-04T19:10:20.399749"
     },
     {
-      "id": "9285e2fbc077_chunk_0",
-      "parent_id": "9285e2fbc077",
+      "id": "8af24fb0f86c_chunk_0",
+      "parent_id": "8af24fb0f86c",
       "source": "FastAPI",
       "url": "https://fastapi.tiangolo.com/advanced/",
-      "title": "FastAPI - /advanced/",
+      "title": "FastAPI - advanced/",
       "content": "Advanced User Guide¶Additional Features¶The mainTutorial - User Guideshould be enough to give you a tour through all the main features ofFastAPI.In the next sections you will see other options, configurations, and additional features.TipThe next sections arenot necessarily \"advanced\".And it's possible that for your use case, the solution is in one of them.Read the Tutorial first¶You could still use most of the features inFastAPIwith the knowledge from the mainTutorial - User Guide.And the next sections assume you already read it, and assume that you know those main ideas.Back to top",
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 89,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.793159",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:35.967707"
+      "crawled_at": "2025-10-04T19:10:21.481702"
     },
     {
-      "id": "daf0fc4b9077_chunk_0",
-      "parent_id": "daf0fc4b9077",
+      "id": "0b6963c71002_chunk_0",
+      "parent_id": "0b6963c71002",
       "source": "FastAPI",
       "url": "https://fastapi.tiangolo.com/tutorial/security/",
-      "title": "FastAPI - /tutorial/security/",
+      "title": "FastAPI - tutorial/security/",
       "content": "Security¶There are many ways to handle security, authentication and authorization.And it normally is a complex and \"difficult\" topic.In many frameworks and systems just handling security and authentication takes a big amount of effort and code (in many cases it can be 50% or more of all the code written).FastAPIprovides several tools to help you deal withSecurityeasily, rapidly, in a standard way, without having to study and learn all the security specifications.But first, let's check some small concepts.In a hurry?¶If you don't care about any of these terms and you just need to add security with authentication based on username and passwordright now, skip to the next chapters.OAuth2¶OAuth2 is a specification that defines several ways to handle authentication and authorization.It is quite an extensive specification and covers several complex use cases.It includes ways to authenticate using a \"third party\".That's what all the systems with \"login with Facebook, Google, X (Twitter), GitHub\" use underneath.OAuth 1¶There was an OAuth 1, which is very different from OAuth2, and more complex, as it included direct specifications on how to encrypt the communication.It is not very popular or used nowadays.OAuth2 doesn't specify how to encrypt the communication, it expects you to have your application served with HTTPS.TipIn the section aboutdeploymentyou will see how to set up HTTPS for free, using Traefik and Let's Encrypt.OpenID Connect¶OpenID Connect is another specification, based onOAuth2.It just extends OAuth2 specifying some things that are relatively ambiguous in OAuth2, to try to make it more interoperable.For example, Google login uses OpenID Connect (which underneath uses OAuth2).But Facebook login doesn't support OpenID Connect. It has its own flavor of OAuth2.OpenID (not \"OpenID Connect\")¶There was also an \"OpenID\" specification. That tried to solve the same thing asOpenID Connect, but was not based on OAuth2.So, it was a complete additional system.It is not very popular or used nowadays.OpenAPI¶OpenAPI (previously known as Swagger) is the open specification for building APIs (now part of the Linux Foundation).FastAPIis based onOpenAPI.That's what makes it possible to have multiple automatic interactive documentation interfaces, code generation, etc.OpenAPI has a way to define multiple security \"schemes\".By using them, you can take advantage of all these standard-based tools, including these interactive documentation systems.OpenAPI defines the following security schemes:apiKey: an application specific key that can come from:A query parameter.A header.A cookie.http: standard HTTP authentication systems, including:bearer: a headerAuthorizationwith a value ofBearerplus a token. This is inherited from OAuth2.HTTP Basic authentication.HTTP Digest, etc.oauth2: all the OAuth2 ways to handle security (called \"flows\").Several of these flows are appropriate for building an OAuth 2.0 authentication provider (like Google, Facebook, X (Twitter), GitHub, etc):implicitclientCredentialsauthorizationCodeBut there is one specific \"flow\" that can be perfectly used for handling authentication in the same application directly:password: some next chapters will cover examples of this.openIdConnect: has a way to define how to discover OAuth2 authentication data automatically.This automatic discovery is what is defined in the OpenID Connect specification.TipIntegrating other authentication/authorization providers like Google, Facebook, X (Twitter), GitHub, etc. is also possible and relatively easy.The most complex problem is building an authentication/authorization provider like",
       "chunk_index": 0,
       "total_chunks": 2,
       "word_count": 500,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.793159",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:37.072248"
+      "crawled_at": "2025-10-04T19:10:22.565901"
     },
     {
-      "id": "daf0fc4b9077_chunk_1",
-      "parent_id": "daf0fc4b9077",
+      "id": "0b6963c71002_chunk_1",
+      "parent_id": "0b6963c71002",
       "source": "FastAPI",
       "url": "https://fastapi.tiangolo.com/tutorial/security/",
-      "title": "FastAPI - /tutorial/security/",
+      "title": "FastAPI - tutorial/security/",
       "content": "of this.openIdConnect: has a way to define how to discover OAuth2 authentication data automatically.This automatic discovery is what is defined in the OpenID Connect specification.TipIntegrating other authentication/authorization providers like Google, Facebook, X (Twitter), GitHub, etc. is also possible and relatively easy.The most complex problem is building an authentication/authorization provider like those, butFastAPIgives you the tools to do it easily, while doing the heavy lifting for you.FastAPIutilities¶FastAPI provides several tools for each of these security schemes in thefastapi.securitymodule that simplify using these security mechanisms.In the next chapters you will see how to add security to your API using those tools provided byFastAPI.And you will also see how it gets automatically integrated into the interactive documentation system.Back to top",
       "chunk_index": 1,
       "total_chunks": 2,
       "word_count": 117,
-      "chunked_at": "2025-10-04T19:20:46.785302",
+      "chunked_at": "2025-10-04T19:10:29.793159",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:37.072248"
+      "crawled_at": "2025-10-04T19:10:22.565901"
     },
     {
       "id": "c5147e0c653d_chunk_0",
@@ -182,9 +182,23 @@
       "chunk_index": 0,
       "total_chunks": 1,
       "word_count": 240,
-      "chunked_at": "2025-10-04T19:20:46.786778",
+      "chunked_at": "2025-10-04T19:10:29.793159",
       "type": "documentation",
-      "crawled_at": "2025-10-03T19:30:38.477914"
+      "crawled_at": "2025-10-04T19:10:23.965302"
+    },
+    {
+      "id": "4401efc741d5_chunk_0",
+      "parent_id": "4401efc741d5",
+      "source": "Redis",
+      "url": "https://redis.io/docs/latest/develop/",
+      "title": "Redis - develop/",
+      "content": "Develop with RedisLearn how to develop with RedisTry these Redis commandsRedis CLIPINGHSETuser:1 name antirez vocation artistHGETALLuser:1SETe 2.71INCRBYFLOATe 0.43RENAMEe piGETpi#See all commandsPINGGet a Redis server running in minutes with a free trial ofRedis Cloud, or installRedis Open Sourcelocally on your machine. Then, explore Redis with your favoriteprogramming languageor analyze and manage your database with ourUI tools:Get startedDocument searchVector searchPythonSee Python examplesSee Python examplesSee Python examplesC#/.NETSee C# examplesSee C# examplesSee C# examplesNode.jsSee JS examplesSee JS examplesSee JS examplesJavaSee Java examplesSee Java examplesSee Java examplesGoSee Go examplesSee Go examplesSee Go examplesPHPSee PHP examplesSee PHP examplesSee PHP examplesRedis InsightVisual client tool for creating, managing, and analyzing Redis databases.Download Redis Insight.Redis for VS CodeVS Code extension for creating, managing, and analyzing Redis databases.Install Redis for VS Code.Quick startData typesQuery engineVector databaseDocument storeData structure storeRAG with RedisGenAIStringJSONHashVector setProbabilistic typesGet startedSchema field typesIndexingQueryingRATE THIS PAGE★★★★★Back to top âSubmit",
+      "chunk_index": 0,
+      "total_chunks": 1,
+      "word_count": 141,
+      "chunked_at": "2025-10-04T19:10:29.793159",
+      "type": "documentation",
+      "crawled_at": "2025-10-04T19:10:27.088218"
     }
   ]
 }
