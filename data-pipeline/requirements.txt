@@ -1,0 +1,24 @@
+# Data Pipeline Requirements
+# For RAG pipeline: crawler -> chunker -> embedder -> pgvector
+
+# Web scraping and content extraction
+requests>=2.32.0
+beautifulsoup4>=4.12.3
+newspaper3k>=0.2.8
+lxml>=5.3.0
+certifi>=2024.7.4
+lxml-html-clean>=0.2.0
+
+# Text processing and embeddings
+sentence-transformers>=2.2.2
+transformers>=4.30.0
+torch>=2.0.0
+numpy>=1.24.0
+
+# Database connectivity
+psycopg2-binary>=2.9.7
+psycopg2>=2.9.7
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.65.0

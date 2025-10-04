@@ -1,0 +1,12 @@
+{
+  "start_time": "2025-10-04T16:01:53.155433",
+  "steps_completed": [
+    "crawler",
+    "chunker"
+  ],
+  "errors": [
+    "embedder: Cannot reach zbgoyzahlllglsljlnxj.supabase.co:5432"
+  ],
+  "end_time": "2025-10-04T16:02:07.385423",
+  "success": false
+}
