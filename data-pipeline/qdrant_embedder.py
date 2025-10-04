@@ -13,6 +13,13 @@ import os
 from typing import List, Dict, Optional, Any
 from pathlib import Path
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # Load .env file from current directory
+except ImportError:
+    pass  # dotenv not available, use system env vars
+
 try:
     from qdrant_manager import QdrantManager
     from tqdm import tqdm
