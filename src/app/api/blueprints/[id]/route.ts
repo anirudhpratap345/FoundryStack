@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BlueprintService } from '@/lib/supabase/blueprints';
+import { BlueprintService } from '@/lib/qdrant/blueprints';
 import { retrieverClient } from '@/lib/ai/retriever-client';
 import { analystClient } from '@/lib/ai/analyst-client';
 import { writerClient } from '@/lib/ai/writer-client';

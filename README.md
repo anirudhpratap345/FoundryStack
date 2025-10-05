@@ -4,15 +4,16 @@ Transform startup ideas into end-to-end blueprints and 4-week implementation pla
 
 ## 🚀 What We've Built
 
-This is the MVP frontend mockup for FoundryStack, built with the tech stack decisions outlined in the project requirements.
+FoundryStack is a comprehensive multi-agent SaaS system that transforms startup ideas into detailed technical blueprints using AI-powered analysis and orchestration.
 
 ### ✅ Completed Features
 
-- **Modern Frontend**: Next.js 14 with App Router, Tailwind CSS, and shadcn/ui components
-- **GraphQL API**: GraphQL Yoga server with comprehensive schema for blueprints
-- **Responsive Design**: Beautiful, modern UI that works on all devices
+- **Modern Frontend**: Next.js 15 with App Router, Tailwind CSS, and shadcn/ui components
+- **Multi-Agent System**: 5 specialized AI agents working in orchestration
+- **Vector Database**: Qdrant for semantic search and document retrieval
 - **Blueprint Management**: Create, view, and manage startup blueprints
-- **Mock Data**: Sample blueprints with realistic market analysis and technical details
+- **Real-time Processing**: Live updates during blueprint generation
+- **Export Capabilities**: Multiple format exports (JSON, Markdown, HTML, PDF)
 
 ### 🎯 Key Pages
 
@@ -22,33 +23,55 @@ This is the MVP frontend mockup for FoundryStack, built with the tech stack deci
 
 ### 🛠 Tech Stack
 
-- **Frontend**: Next.js 14, React 19, TypeScript
+- **Frontend**: Next.js 15, React 19, TypeScript
 - **Styling**: Tailwind CSS v4, shadcn/ui components
-- **API**: GraphQL Yoga with comprehensive schema
+- **Vector Database**: Qdrant Cloud for semantic search
+- **AI Integration**: Gemini, OpenAI, Groq APIs
+- **Caching**: Redis for performance optimization
 - **Icons**: Lucide React
 - **State Management**: React hooks (useState, useEffect)
+
+### 🤖 Multi-Agent Architecture
+
+The system uses 5 specialized AI agents:
+
+1. **Retriever Agent** - Queries Qdrant for relevant context
+2. **Analyst Agent** - Analyzes context into structured insights
+3. **Writer Agent** - Generates comprehensive blueprints
+4. **Reviewer Agent** - Reviews and refines blueprints
+5. **Exporter Agent** - Exports blueprints in multiple formats
 
 ### 🏗 Project Structure
 
 ```
 src/
 ├── app/
-│   ├── api/graphql/          # GraphQL API endpoint
-│   ├── blueprints/           # Blueprint pages
-│   ├── globals.css           # Global styles and design system
-│   ├── layout.tsx            # Root layout
-│   └── page.tsx              # Home page
-├── components/ui/            # Reusable UI components
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── input.tsx
-│   └── textarea.tsx
+│   ├── api/
+│   │   ├── blueprints/          # Blueprint CRUD operations
+│   │   ├── retriever/           # Retriever agent API
+│   │   ├── analyst/             # Analyst agent API
+│   │   ├── writer/              # Writer agent API
+│   │   ├── reviewer/            # Reviewer agent API
+│   │   ├── exporter/            # Exporter agent API
+│   │   └── health/              # Health check endpoint
+│   ├── blueprints/              # Blueprint pages
+│   ├── globals.css              # Global styles and design system
+│   ├── layout.tsx               # Root layout
+│   └── page.tsx                 # Home page
+├── components/ui/               # Reusable UI components
 └── lib/
-    ├── graphql/              # GraphQL schema and resolvers
-    │   ├── schema.ts
-    │   ├── resolvers.ts
-    │   └── client.ts
-    └── utils.ts              # Utility functions
+    ├── qdrant/                  # Qdrant database service
+    ├── ai/                      # AI client integrations
+    ├── redis/                   # Redis caching
+    └── utils.ts                 # Utility functions
+
+data-pipeline/
+├── crawler/                     # Web crawling for data collection
+├── chunker.py                   # Document chunking
+├── qdrant_manager.py            # Qdrant operations
+├── qdrant_embedder.py           # Embedding generation
+├── retriever_agent.py           # Retriever agent implementation
+└── retriever_api.py             # Retriever agent API
 ```
 
 ### 🚀 Getting Started
@@ -58,13 +81,49 @@ src/
    npm install
    ```
 
-2. **Start development server**:
+2. **Set up environment variables**:
+   ```bash
+   cp env.example .env.local
+   # Edit .env.local with your API keys
+   ```
+
+3. **Start development server**:
    ```bash
    npm run dev
    ```
 
-3. **Open your browser**:
+4. **Open your browser**:
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+### 🐳 Docker Setup
+
+For full multi-agent system with Docker:
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Check service health
+docker-compose ps
+```
+
+### 🔧 Environment Variables
+
+Required environment variables:
+
+```env
+# Qdrant Configuration
+QDRANT_URL=https://your-cluster-id.region.cloud.qdrant.io
+QDRANT_API_KEY=your_qdrant_api_key_here
+
+# AI Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
+AI_PROVIDER=gemini
+
+# Optional AI Providers
+OPENAI_API_KEY=your_openai_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+```
 
 ### 🎨 Design System
 
@@ -75,41 +134,36 @@ The app uses a comprehensive design system with:
 - **Spacing**: Tailwind's spacing scale
 - **Shadows**: Subtle elevation system
 
-### 📊 GraphQL Schema
+### 🔄 Data Pipeline
 
-The GraphQL API includes comprehensive types for:
-- **Blueprints**: Main entity with status tracking
-- **Market Analysis**: Target market, competition, positioning
-- **Technical Blueprint**: Architecture, tech stack, API design
-- **Implementation Plan**: Sprints, tasks, milestones, deliverables
-- **Code Templates**: Starter repositories and boilerplate code
+The system includes a complete data pipeline:
 
-### 🔄 Next Steps
+1. **Crawling**: Web scraping for technical documentation
+2. **Chunking**: Document segmentation for optimal processing
+3. **Embedding**: Vector generation using sentence-transformers
+4. **Storage**: Qdrant vector database for semantic search
+5. **Retrieval**: Context-aware document retrieval
 
-The frontend mockup is complete and ready for backend integration:
-
-1. **Python FastAPI Service**: Orchestration and LLM integration
-2. **Database Setup**: PostgreSQL with Supabase
-3. **Vector Search**: Qdrant for pattern matching
-4. **LLM Integration**: OpenAI GPT-4 API calls
-5. **Real-time Updates**: WebSocket connections for blueprint generation progress
-
-### 🎯 Key Features Demonstrated
+### 🎯 Key Features
 
 - ✅ **Idea Input**: Users can describe their startup ideas
-- ✅ **Blueprint Creation**: GraphQL mutation creates new blueprints
-- ✅ **Dashboard View**: List all blueprints with status indicators
-- ✅ **Detailed View**: Comprehensive blueprint analysis display
+- ✅ **Multi-Agent Processing**: 5 AI agents working in orchestration
+- ✅ **Vector Search**: Semantic search across technical documentation
+- ✅ **Blueprint Generation**: Comprehensive technical blueprints
+- ✅ **Real-time Updates**: Live progress tracking
+- ✅ **Export Options**: Multiple format exports
 - ✅ **Responsive Design**: Works on desktop, tablet, and mobile
 - ✅ **Dark Mode**: Automatic dark/light theme switching
-- ✅ **Loading States**: Proper loading indicators and error handling
+- ✅ **Error Handling**: Robust error handling and recovery
 
-### 🚀 Ready for Backend Integration
+### 🚀 Production Ready
 
-The frontend is fully prepared for backend integration with:
-- GraphQL client ready for real API calls
-- Error handling and loading states
-- Type-safe interfaces for all data structures
-- Responsive design that will work with real data
+The system is production-ready with:
+- Docker containerization
+- Health checks and monitoring
+- Error handling and logging
+- Performance optimization with Redis caching
+- Scalable multi-agent architecture
+- Vector database integration
 
-This mockup demonstrates the complete user experience and provides a solid foundation for building the full FoundryStack application.
+This is a complete, production-ready multi-agent SaaS system for transforming startup ideas into detailed technical blueprints.

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { BlueprintService } from '@/lib/supabase/blueprints';
+import { BlueprintService } from '@/lib/qdrant/blueprints';
 
 export async function GET() {
   try {
@@ -8,9 +8,8 @@ export async function GET() {
     
     // Check environment variables
     const requiredEnvVars = [
-      'NEXT_PUBLIC_SUPABASE_URL',
-      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-      'SUPABASE_SERVICE_ROLE_KEY',
+      'QDRANT_URL',
+      'QDRANT_API_KEY',
       'GEMINI_API_KEY'
     ];
     
@@ -23,7 +22,8 @@ export async function GET() {
       environment: process.env.NODE_ENV || 'development',
       database: {
         connected: true,
-        blueprintsCount: blueprints.length
+        blueprintsCount: blueprints.length,
+        type: 'Qdrant'
       },
       environmentVariables: {
         allPresent: missingEnvVars.length === 0,
@@ -47,7 +47,8 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       error: error instanceof Error ? error.message : 'Unknown error',
       database: {
-        connected: false
+        connected: false,
+        type: 'Qdrant'
       }
     }, { status: 503 });
   }

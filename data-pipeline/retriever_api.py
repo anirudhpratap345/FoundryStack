@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 import logging
 import json
+import os
 
 from retriever_agent import RetrieverAgent, RetrievedDocument, QueryContext
 
@@ -239,4 +240,11 @@ async def get_stats():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    host = os.getenv("RETRIEVER_HOST", "0.0.0.0")
+    # Prefer RETRIEVER_PORT, then PORT, default to 8001
+    port_env = os.getenv("RETRIEVER_PORT") or os.getenv("PORT") or "8001"
+    try:
+        port = int(port_env)
+    except ValueError:
+        port = 8001
+    uvicorn.run(app, host=host, port=port)

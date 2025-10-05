@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { blueprintJobProcessor } from '@/lib/jobs/blueprint-generator';
-import { BlueprintService } from '@/lib/supabase/blueprints';
+import { BlueprintService } from '@/lib/qdrant/blueprints';
 import { validateBlueprintIdea, validateBlueprintTitle, sanitizeInput, rateLimiter } from '@/lib/validation';
 import { retrieverClient } from '@/lib/ai/retriever-client';
 import { analystClient } from '@/lib/ai/analyst-client';
