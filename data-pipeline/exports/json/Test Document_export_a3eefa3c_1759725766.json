@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "export_id": "export_a3eefa3c_1759725766",
+    "title": "Test Document",
+    "exported_at": "2025-10-06T10:12:46.755135",
+    "exporter_version": "1.0.0"
+  },
+  "review_data": {
+    "review": {
+      "reviewed_draft": {
+        "title": "Test Document",
+        "summary": "This is a test document.",
+        "sections": [
+          {
+            "heading": "Test",
+            "content": "Test content"
+          }
+        ],
+        "references": []
+      },
+      "accuracy_score": 8.0,
+      "clarity_score": 8.0,
+      "completeness_score": 7.0,
+      "suggestions": [
+        "Add more examples"
+      ],
+      "final_recommendation": "Approve"
+    }
+  }
+}
