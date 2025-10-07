@@ -117,16 +117,18 @@ export async function getBlueprintJob(blueprintId: string): Promise<BlueprintJob
 }
 
 // Regenerate AI content for a blueprint
-export async function regenerateBlueprint(id: string): Promise<Blueprint> {
+export async function regenerateBlueprint(id: string, prompt: string): Promise<Blueprint> {
   const response = await fetch(`${API_BASE}/blueprints/${id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ query: prompt })
   });
   
   if (!response.ok) {
-    throw new Error(`Failed to regenerate blueprint: ${response.statusText}`);
+    const detail = await response.text().catch(() => response.statusText);
+    throw new Error(`Failed to regenerate blueprint: ${response.status} ${detail}`);
   }
   
   const data = await response.json();
@@ -153,7 +155,7 @@ export function exportBlueprintAsMarkdown(blueprint: Blueprint): void {
   markdown += `**Description:** ${blueprint.description}\n\n`;
   markdown += `**Status:** ${blueprint.status}\n`;
   markdown += `**Created:** ${new Date(blueprint.createdAt).toLocaleDateString()}\n\n`;
-  
+
   if (blueprint.marketAnalysis) {
     markdown += `## Market Analysis\n\n`;
     markdown += `**Target Market:** ${blueprint.marketAnalysis.targetMarket}\n\n`;

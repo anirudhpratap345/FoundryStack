@@ -405,6 +405,10 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    const { query } = await request.json().catch(() => ({ query: '' }));
+    if (!query || typeof query !== 'string' || !query.trim()) {
+      return NextResponse.json({ error: "'query' is required" }, { status: 400 });
+    }
     const blueprint = await BlueprintService.getById(id);
     
     if (!blueprint) {
@@ -419,8 +423,8 @@ export async function POST(
 
     // Generate new AI content using multi-agent system
     try {
-      // Extract business concept from the idea
-      const businessConcept = blueprint.idea.replace(/create a blueprint for/i, '').replace(/blueprint/i, '').trim();
+      // Use user-provided prompt for dynamic generation
+      const businessConcept = query.trim();
       
       // Generate query hash for caching
       const queryHash = generateQueryHash(businessConcept);
