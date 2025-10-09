@@ -150,8 +150,8 @@ export default function AgentPipelineTest() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">🧪 Multi-Agent Pipeline Test</h2>
+      <div className="glass rounded-2xl border border-white/10 p-6">
+        <h2 className="text-2xl font-bold text-white mb-6">🧪 Multi-Agent Pipeline Test</h2>
         
         {/* Test Query Input */}
         <div className="mb-6">
@@ -192,7 +192,7 @@ export default function AgentPipelineTest() {
 
         {/* Overall Status */}
         {overallStatus !== 'idle' && (
-          <div className="mb-6 p-4 rounded-lg bg-gray-50">
+          <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
             <div className="flex items-center gap-2">
               <span className="text-lg">
                 {overallStatus === 'running' && '🔄'}

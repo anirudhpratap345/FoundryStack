@@ -52,12 +52,13 @@ export default function Pricing() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {tiers.map((tier) => (
+        {tiers.map((tier, idx) => (
           <GlassCard
             key={tier.name}
             variant={tier.highlighted ? "strong" : "default"}
             glow={tier.highlighted ? "purple" : "none"}
-            className={`${tier.highlighted ? "border-white/20" : ""}`}
+            delay={0.1 * idx}
+            className={`${tier.highlighted ? "border-white/20 glow-border" : ""}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-xl font-semibold text-white">{tier.name}</h4>

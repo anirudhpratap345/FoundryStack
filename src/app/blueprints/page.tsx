@@ -55,15 +55,15 @@ export default function BlueprintsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-500/10 text-green-300 border border-green-500/20';
       case 'GENERATING':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-500/10 text-blue-300 border border-blue-500/20';
       case 'ANALYZING':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/20';
       case 'FAILED':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+        return 'bg-red-500/10 text-red-300 border border-red-500/20';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-white/10 text-white border border-white/10';
     }
   };
 
@@ -79,13 +79,12 @@ export default function BlueprintsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen relative overflow-hidden pt-28">
-        <div className="absolute inset-0 animated-gradient opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
-        <div className="relative z-10 container mx-auto px-6 py-16">
+      <div className="min-h-screen relative overflow-hidden pt-24">
+        <div className="absolute inset-0 bg-[#0d1117]"></div>
+        <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-white mb-4">Your Blueprints</h1>
-            <p className="text-gray-300">AI-generated startup blueprints</p>
+            <h1 className="text-2xl font-semibold text-white mb-2">Your Blueprints</h1>
+            <p className="text-gray-300 text-sm">AI-generated startup blueprints</p>
           </div>
           <BlueprintListSkeleton />
         </div>
@@ -94,44 +93,22 @@ export default function BlueprintsPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden pt-28">
-      {/* Animated background */}
-      <div className="absolute inset-0 animated-gradient opacity-20"></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
+    <div className="min-h-screen relative overflow-hidden pt-24">
+      {/* Dark minimalist background */}
+      <div className="absolute inset-0 bg-[#0d1117]"></div>
       
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/10 glass">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-white">FoundryStack</h1>
-            </div>
-            <nav className="flex space-x-4">
-              <Link href="/">
-                <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
-                  New Blueprint
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Header removed per request */}
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-6 py-16">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h2 className="text-3xl font-bold text-white mb-3">
+      <div className="relative z-10 container mx-auto px-5 md:px-6 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-1">
               Your Blueprints
             </h2>
-            <p className="text-lg text-gray-300">
-              Manage and view your startup blueprints
-            </p>
+            <p className="text-sm text-gray-300">Manage and view your startup blueprints</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Button 
               onClick={() => fetchBlueprints(true)}
               disabled={refreshing}
@@ -139,12 +116,12 @@ export default function BlueprintsPage() {
               size="sm" 
               className="border-white/20 text-white hover:bg-white/10"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
               {refreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
             <Link href="/">
-              <Button className="flex items-center gap-3 h-12 px-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 border-0 shadow-lg shadow-blue-500/25">
-                <Plus className="h-5 w-5" />
+              <Button className="flex items-center gap-3 h-10 sm:h-11 px-5 sm:px-6 btn-primary-light rounded-full">
+                <Plus className="h-5 w-5 icon-shift" aria-hidden="true" />
                 Create New Blueprint
               </Button>
             </Link>
@@ -156,70 +133,71 @@ export default function BlueprintsPage() {
             <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-800 w-fit mx-auto mb-6">
               <Sparkles className="h-12 w-12 text-white" />
             </div>
-                               <h3 className="text-xl font-semibold text-white mb-4">
+            <h3 className="text-lg font-semibold text-white mb-3">
                      No blueprints yet
                    </h3>
-                   <p className="text-gray-400 mb-6 max-w-md mx-auto text-sm">
+            <p className="text-gray-400 mb-6 max-w-md mx-auto text-sm">
                      Create your first blueprint to get started with transforming your startup idea into reality.
                    </p>
             <Link href="/">
-              <Button className="flex items-center gap-3 h-12 px-8 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 border-0 shadow-lg shadow-blue-500/25">
+              <Button className="flex items-center gap-3 h-11 px-7 btn-primary-light rounded-full">
                 <Plus className="h-5 w-5" />
                 Create Your First Blueprint
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+           <div className="grid gap-5 md:gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto place-items-stretch">
             {blueprints.map((blueprint) => (
-              <div key={blueprint.id} className="glass rounded-2xl p-6 border border-white/10 hover:border-purple-500/50 transition-all duration-300 group">
-                <div className="flex items-start justify-between mb-4">
-                                           <div className="flex-1">
-                           <h3 className="text-lg font-semibold text-white mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors">
+              <div key={blueprint.id} className="hover-glow-border glass-strong card-ambient rounded-2xl p-6 md:p-7 border border-white/15 transition-all duration-300 group h-full flex flex-col focus-within:outline-none" tabIndex={0} aria-label={`Blueprint card for ${blueprint.title}`}>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-white mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors">
                              {blueprint.title}
-                           </h3>
-                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(blueprint.status)}`}>
-                      {blueprint.status === 'COMPLETED' && <CheckCircle className="h-3 w-3" />}
-                      {blueprint.status === 'ANALYZING' && <Clock className="h-3 w-3 animate-pulse" />}
-                      {blueprint.status === 'FAILED' && <AlertCircle className="h-3 w-3" />}
+                    </h3>
+                    <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusColor(blueprint.status)}`}>
+                      {blueprint.status === 'COMPLETED' && <CheckCircle className="h-3 w-3 icon-shift" />}
+                      {blueprint.status === 'ANALYZING' && <Clock className="h-3 w-3 icon-shift animate-pulse" />}
+                      {blueprint.status === 'FAILED' && <AlertCircle className="h-3 w-3 icon-shift" />}
                       {blueprint.status}
                     </div>
                   </div>
                 </div>
                 
-                <p className="text-gray-400 mb-6 line-clamp-3 leading-relaxed text-sm">
+                <p className="text-gray-300 mb-4 line-clamp-3 leading-relaxed text-sm">
                   {blueprint.description}
                 </p>
                 
-                <div className="space-y-3 text-sm text-gray-400 mb-6">
+                <div className="space-y-2 text-xs md:text-sm text-gray-400 mb-5">
                   <div className="flex items-center gap-3">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4 icon-shift" />
                     Created {formatDate(blueprint.created_at)}
                   </div>
                   <div className="flex items-center gap-3">
-                    <Clock className="h-4 w-4" />
+                    <Clock className="h-4 w-4 icon-shift" />
                     Updated {formatDate(blueprint.updated_at)}
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Link href={`/blueprints/${blueprint.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full border-white/20 text-white hover:bg-white/10">
-                      <Eye className="h-4 w-4 mr-2" />
+                <div className="mt-auto flex gap-2.5">
+                  <Link href={`/blueprints/${blueprint.id}`} className="flex-1" aria-label={`View details for ${blueprint.title}`}>
+                    <Button variant="outline" size="sm" className="w-full border-white/25 text-white/95 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/40 btn-outline-glow">
+                      <Eye className="h-4 w-4 mr-2 icon-shift" />
                       View Details
                     </Button>
                   </Link>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500"
+                    aria-label={`Delete ${blueprint.title}`}
+                    className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500 focus-visible:ring-2 focus-visible:ring-red-400/40"
                     onClick={() => handleDeleteBlueprint(blueprint.id, blueprint.title)}
                     disabled={deleting === blueprint.id}
                   >
                     {deleting === blueprint.id ? (
                       <RefreshCw className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 icon-shift" />
                     )}
                   </Button>
                 </div>

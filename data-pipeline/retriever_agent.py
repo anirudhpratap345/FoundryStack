@@ -12,12 +12,18 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, asdict
 from dotenv import load_dotenv
+from pathlib import Path
 
 from qdrant_manager import QdrantManager
 
 # Load environment variables
 try:
-    load_dotenv()
+    # Load .env from this file's directory (data-pipeline/)
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+    else:
+        load_dotenv()  # Try current directory as fallback
 except Exception as e:
     print(f"Warning: Could not load .env file: {e}")
     print("Using system environment variables instead")
@@ -63,7 +69,8 @@ class RetrieverAgent:
     def __init__(self, 
                  collection_name: str = "foundrystack_docs",
                  default_limit: int = 5,
-                 min_score_threshold: float = 0.3):
+                 min_score_threshold: float = 0.3,
+                 fallback_path: Optional[str] = None):
         """
         Initialize the Retriever Agent.
         
@@ -71,10 +78,16 @@ class RetrieverAgent:
             collection_name: Name of the Qdrant collection to query
             default_limit: Default number of results to return
             min_score_threshold: Minimum relevance score threshold
+            fallback_path: Path to fallback context JSON (auto-detected if None)
         """
         self.collection_name = collection_name
         self.default_limit = default_limit
         self.min_score_threshold = min_score_threshold
+        
+        # Load fallback context
+        if fallback_path is None:
+            fallback_path = Path(__file__).parent / "fallback_context.json"
+        self.fallback_data = self._load_fallback(fallback_path)
         
         # Initialize Qdrant manager
         try:
@@ -83,6 +96,58 @@ class RetrieverAgent:
         except Exception as e:
             logger.error(f"Failed to initialize QdrantManager: {e}")
             raise
+    
+    def _load_fallback(self, fallback_path: Path) -> Dict[str, Any]:
+        """Load fallback context data from JSON file."""
+        try:
+            if fallback_path.exists():
+                with open(fallback_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                logger.info(f"Loaded fallback context with {len(data)} industries")
+                return data
+            else:
+                logger.warning(f"Fallback context file not found: {fallback_path}")
+                return {}
+        except Exception as e:
+            logger.error(f"Failed to load fallback context: {e}")
+            return {}
+    
+    def _detect_industry(self, query: str) -> Optional[str]:
+        """Detect industry from query keywords."""
+        query_lower = query.lower()
+        for industry, config in self.fallback_data.items():
+            keywords = config.get("keywords", [])
+            if any(keyword in query_lower for keyword in keywords):
+                return industry
+        return None
+    
+    def _get_fallback_contexts(self, query: str) -> List[RetrievedDocument]:
+        """Get fallback context when Qdrant is empty."""
+        industry = self._detect_industry(query)
+        if not industry or industry not in self.fallback_data:
+            logger.warning(f"No fallback data for industry: {industry}")
+            return []
+        
+        fallback_docs = []
+        contexts = self.fallback_data[industry].get("contexts", [])
+        
+        for idx, content in enumerate(contexts):
+            doc = RetrievedDocument(
+                id=f"fallback_{industry}_{idx}",
+                source=f"Fallback: {industry.title()}",
+                title=f"{industry.title()} Industry Context",
+                content=content,
+                url="",
+                relevance_score=0.5,  # Moderate score for fallback
+                word_count=len(content.split()),
+                chunk_index=idx,
+                total_chunks=len(contexts),
+                retrieved_at=datetime.now().isoformat()
+            )
+            fallback_docs.append(doc)
+        
+        logger.info(f"Using {len(fallback_docs)} fallback contexts for industry: {industry}")
+        return fallback_docs
     
     def retrieve_context(self, 
                         query: str, 
@@ -149,6 +214,15 @@ class RetrieverAgent:
                 # Count sources
                 source = retrieved_doc.source
                 sources_count[source] = sources_count.get(source, 0) + 1
+            
+            # Use fallback if no results from Qdrant
+            if not retrieved_docs and self.fallback_data:
+                logger.warning("Qdrant returned zero results - using fallback context")
+                retrieved_docs = self._get_fallback_contexts(query)
+                # Recalculate sources_count
+                sources_count = {}
+                for doc in retrieved_docs:
+                    sources_count[doc.source] = sources_count.get(doc.source, 0) + 1
             
             # Calculate search time
             search_time = (datetime.now() - start_time).total_seconds() * 1000

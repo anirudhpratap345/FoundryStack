@@ -24,7 +24,14 @@ from urllib.parse import urlparse
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
-    load_dotenv()  # Load .env file from current directory
+    from pathlib import Path
+    
+    # Load .env from this file's directory (data-pipeline/)
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+    else:
+        load_dotenv()  # Try current directory as fallback
 except ImportError:
     pass  # dotenv not available, use system env vars
 except Exception as e:

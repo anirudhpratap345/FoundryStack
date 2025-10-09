@@ -23,7 +23,7 @@ export default function MarketAnalysisDisplay({ analysis }: MarketAnalysisDispla
 
       {/* Target Market */}
       <div className="glass rounded-2xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Target className="h-5 w-5" />
           Target Market Analysis
         </h3>
@@ -69,23 +69,23 @@ export default function MarketAnalysisDisplay({ analysis }: MarketAnalysisDispla
           <div className="mt-6">
             <h4 className="text-lg font-semibold text-white mb-4">Demographics</h4>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Age</h5>
                 <p className="text-gray-300 text-sm">{analysis.targetMarket.demographics.age}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Income</h5>
                 <p className="text-gray-300 text-sm">{analysis.targetMarket.demographics.income}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Location</h5>
                 <p className="text-gray-300 text-sm">{analysis.targetMarket.demographics.location}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Education</h5>
                 <p className="text-gray-300 text-sm">{analysis.targetMarket.demographics.education}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Profession</h5>
                 <p className="text-gray-300 text-sm">{analysis.targetMarket.demographics.profession}</p>
               </div>

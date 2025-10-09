@@ -89,14 +89,14 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
     <div className="space-y-8">
       {/* Architecture Overview */}
       <div className="glass rounded-2xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Layers className="h-5 w-5" />
           System Architecture
         </h3>
         
         <div className="space-y-4">
           <div>
-            <h4 className="text-lg font-semibold text-white mb-2">Overview</h4>
+            <h4 className="text-base font-semibold text-white mb-2">Overview</h4>
             <p className="text-gray-300">
               {typeof blueprint.architecture === 'string' 
                 ? blueprint.architecture 
@@ -108,13 +108,13 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
           {typeof blueprint.architecture === 'object' && (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-lg font-semibold text-white mb-2">Architecture Pattern</h4>
+                <h4 className="text-base font-semibold text-white mb-2">Architecture Pattern</h4>
                 <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">
                   {blueprint.architecture.pattern || 'Not specified'}
                 </span>
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-white mb-2">Data Flow</h4>
+                <h4 className="text-base font-semibold text-white mb-2">Data Flow</h4>
                 <p className="text-gray-300 text-sm">{blueprint.architecture.dataFlow || 'Not specified'}</p>
               </div>
             </div>
@@ -123,10 +123,10 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
           {/* Components */}
           {blueprint.architecture.components && blueprint.architecture.components.length > 0 && (
             <div>
-              <h4 className="text-lg font-semibold text-white mb-4">System Components</h4>
+              <h4 className="text-base font-semibold text-white mb-3">System Components</h4>
               <div className="grid md:grid-cols-2 gap-4">
                 {blueprint.architecture.components.map((component, index) => (
-                  <div key={index} className="bg-white/5 rounded-lg p-4">
+                  <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
                     <h5 className="text-white font-medium mb-2">{component.name}</h5>
                     <p className="text-gray-300 text-sm mb-2">{component.description}</p>
                     <div className="text-xs text-gray-400">
@@ -143,17 +143,17 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
 
       {/* Tech Stack */}
       <div className="glass rounded-2xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Code className="h-5 w-5" />
           Technology Stack
         </h3>
         
         <div className="space-y-6">
           {blueprint.techStack && blueprint.techStack.map((tech, index) => (
-            <div key={index} className="bg-white/5 rounded-lg p-6">
-              <div className="flex justify-between items-start mb-4">
+            <div key={index} className="bg-white/5 rounded-lg p-6 border border-white/10">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h4 className="text-lg font-semibold text-white">{tech.name}</h4>
+                  <h4 className="text-base font-semibold text-white">{tech.name}</h4>
                   <div className="text-sm text-gray-400">
                     {tech.category}
                   </div>
@@ -205,14 +205,14 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
 
       {/* API Design */}
       <div className="glass rounded-2xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Globe className="h-5 w-5" />
           API Design
         </h3>
         
         <div className="space-y-4">
           {blueprint.apiDesign && blueprint.apiDesign.map((api, index) => (
-            <div key={index} className="bg-white/5 rounded-lg p-4">
+            <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
               <div className="flex items-center gap-3 mb-3">
                 <span className={`px-2 py-1 rounded text-sm font-medium ${
                   api.method === 'GET' ? 'bg-green-500/20 text-green-300' :
@@ -278,7 +278,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
 
       {/* Database Schema */}
       <div className="glass rounded-2xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Database className="h-5 w-5" />
           Database Architecture
         </h3>
@@ -296,15 +296,15 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
           
           {typeof blueprint.databaseSchema === 'object' && (
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Scaling</h5>
                 <p className="text-gray-300 text-sm">{blueprint.databaseSchema.scaling || 'Not specified'}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Backup</h5>
                 <p className="text-gray-300 text-sm">{blueprint.databaseSchema.backup || 'Not specified'}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
+              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <h5 className="text-white font-medium mb-2">Migrations</h5>
                 <p className="text-gray-300 text-sm">{blueprint.databaseSchema.migrations || 'Not specified'}</p>
               </div>
@@ -317,13 +317,13 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
               <h4 className="text-lg font-semibold text-white mb-4">Database Tables</h4>
               <div className="space-y-4">
                 {blueprint.databaseSchema.tables.map((table, index) => (
-                <div key={index} className="bg-white/5 rounded-lg p-4">
+                <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
                   <h5 className="text-white font-medium mb-2">{table.name}</h5>
                   <p className="text-gray-300 text-sm mb-3">{table.description}</p>
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <h6 className="text-white font-medium mb-2">Columns</h6>
+                    <h6 className="text-white font-medium mb-2">Columns</h6>
                       <div className="space-y-1">
                         {table.columns.map((column, i) => (
                           <div key={i} className="text-sm">
@@ -357,7 +357,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
       {/* Security */}
       {blueprint.security && (
         <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Security Implementation
           </h3>
@@ -365,7 +365,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <h4 className="text-lg font-semibold text-white mb-2">Authentication</h4>
+                <h4 className="text-base font-semibold text-white mb-2">Authentication</h4>
                 <p className="text-gray-300 text-sm">{blueprint.security.authentication}</p>
               </div>
               <div>
@@ -399,7 +399,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
       {/* Performance */}
       {blueprint.performance && (
         <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Zap className="h-5 w-5" />
             Performance Optimization
           </h3>
@@ -437,7 +437,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
       {/* Deployment */}
       {blueprint.deployment && (
         <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Server className="h-5 w-5" />
             Deployment & DevOps
           </h3>
@@ -487,7 +487,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
       {/* Monitoring */}
       {blueprint.monitoring && (
         <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Monitor className="h-5 w-5" />
             Monitoring & Observability
           </h3>
@@ -532,7 +532,7 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
       {/* Cost Optimization */}
       {blueprint.costOptimization && (
         <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
             Cost Optimization
           </h3>

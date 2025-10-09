@@ -8,6 +8,8 @@ import { createBlueprint } from "@/lib/api/client";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
+import TrustStats from "@/components/TrustStats";
+import SiteFooter from "@/components/SiteFooter";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
 import HowItWorksModal from "@/components/HowItWorksModal";
@@ -178,6 +180,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <AnimatedBackground />
+      <div className="absolute inset-0 bg-[#0d1117] opacity-95" />
       
       {/* Note: Global Navbar is provided by layout.tsx (fixed). */}
 
@@ -228,10 +231,11 @@ export default function Home() {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
           >
             <AnimatedButton 
-              variant="primary" 
+              variant="secondary" 
               size="lg" 
-              glow={true}
+              glow={false}
               delay={0.9}
+              className="btn-primary-light rounded-full text-black"
             >
               Get Started
               <ArrowRight className="h-5 w-5" />
@@ -431,7 +435,7 @@ export default function Home() {
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ duration: 0.3 }}
-                  className={`p-3 rounded-lg bg-gradient-to-r ${feature.gradient} w-fit mb-4 glow-${feature.glow}`}
+                  className={`icon-circle bg-gradient-to-r ${feature.gradient} mb-4 glow-${feature.glow}`}
                 >
                   <feature.icon className="h-6 w-6 text-white" />
                 </motion.div>
@@ -521,6 +525,9 @@ export default function Home() {
 
       <HowItWorksModal open={howOpen} onClose={()=>setHowOpen(false)} />
 
+      {/* Trust */}
+      <TrustStats />
+
       {/* Testimonials */}
       <Testimonials />
 
@@ -528,33 +535,7 @@ export default function Home() {
       <Pricing />
 
       {/* Footer */}
-      <motion.footer 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-        className="relative z-10 border-t border-white/10 glass-subtle py-16"
-      >
-        <div className="container mx-auto px-6 text-center">
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center justify-center gap-4 mb-6"
-          >
-            <motion.div 
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-              className="p-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 glow-blue"
-            >
-              <Sparkles className="h-6 w-6 text-white" />
-            </motion.div>
-            <span className="text-xl font-bold text-white">FoundryStack</span>
-          </motion.div>
-          <p className="text-gray-400">
-            © 2024 FoundryStack. Transform ideas into reality.
-          </p>
-        </div>
-      </motion.footer>
+      <SiteFooter />
     </div>
   );
 }

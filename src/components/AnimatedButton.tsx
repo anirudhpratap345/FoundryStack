@@ -27,9 +27,9 @@ export default function AnimatedButton({
   const getVariantClasses = () => {
     switch (variant) {
       case "primary":
-        return "bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white border-0 shadow-lg shadow-blue-500/25";
+        return "bg-white text-black hover:bg-black hover:text-white border border-white/10 hover:border-white/30 shadow-lg shadow-white/20";
       case "secondary":
-        return "bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900 text-white border-0 shadow-lg shadow-slate-500/25";
+        return "bg-white/10 text-white hover:bg-white/20 border border-white/20";
       case "outline":
         return "border border-white/20 text-white hover:bg-white/10 bg-transparent";
       case "ghost":
@@ -61,6 +61,7 @@ export default function AnimatedButton({
       }}
       whileHover={{ 
         scale: 1.05,
+        boxShadow: "0 0 24px rgba(255,255,255,0.15), 0 8px 32px rgba(0,0,0,0.35)",
         transition: { duration: 0.2 }
       }}
       whileTap={{ 
@@ -73,7 +74,7 @@ export default function AnimatedButton({
         ${getVariantClasses()}
         ${getSizeClasses()}
         ${glow ? "animate-pulse-glow" : ""}
-        rounded-xl font-medium transition-all duration-300
+        rounded-full font-medium transition-all duration-300
         disabled:opacity-50 disabled:cursor-not-allowed
         flex items-center justify-center gap-3
         ${className}

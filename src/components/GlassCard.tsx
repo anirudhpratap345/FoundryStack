@@ -10,6 +10,7 @@ interface GlassCardProps {
   hover?: boolean;
   glow?: "purple" | "pink" | "blue" | "none";
   delay?: number;
+  elevatedOnHover?: boolean;
 }
 
 export default function GlassCard({ 
@@ -18,7 +19,8 @@ export default function GlassCard({
   variant = "default",
   hover = true,
   glow = "none",
-  delay = 0
+  delay = 0,
+  elevatedOnHover = true
 }: GlassCardProps) {
   const getVariantClass = () => {
     switch (variant) {
@@ -55,13 +57,14 @@ export default function GlassCard({
       }}
       whileHover={hover ? { 
         y: -8,
+        boxShadow: elevatedOnHover ? "0 24px 60px rgba(0,0,0,0.35)" : undefined,
         transition: { duration: 0.3 }
       } : {}}
       className={`
         ${getVariantClass()} 
         ${getGlowClass()}
         ${hover ? "hover-lift" : ""}
-        rounded-2xl p-6 border border-white/10
+        rounded-2xl p-6 border border-white/10 shape-shift
         ${className}
       `}
     >

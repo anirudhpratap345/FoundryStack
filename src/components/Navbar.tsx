@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -19,25 +20,27 @@ export default function Navbar() {
 
   const sectionIds = ["features", "how-it-works", "testimonials", "pricing"];
   const active = useScrollSpy(sectionIds);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   return (
     <header className={`fixed top-0 inset-x-0 z-40 transition-all ${scrolled ? "glass-subtle border-b border-white/10 backdrop-blur" : "bg-transparent"}`}>
-      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
-        <div className={`nav-pill ${scrolled ? "nav-pill--scrolled" : ""} flex items-center justify-between gap-4 w-full md:w-auto md:gap-8 px-4 md:px-6 py-2`}>
+      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-center">
+        <div className={`nav-pill ${scrolled ? "nav-pill--scrolled" : ""} flex items-center justify-between gap-4 md:gap-8 px-4 md:px-6 py-2 w-[min(100%,1000px)] mx-auto`}>
           <Link href="/" className="text-white font-semibold text-base md:text-lg tracking-tight">
             FoundryStack
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6 text-sm">
-            <a href="#features" aria-current={active==="features"?"page":undefined}
-               className={`underline-soft transition-colors ${active==="features"?"text-white":"text-gray-300 hover:text-white"}`}>Features</a>
-            <a href="#how-it-works" aria-current={active==="how-it-works"?"page":undefined}
-               className={`underline-soft transition-colors ${active==="how-it-works"?"text-white":"text-gray-300 hover:text-white"}`}>How it works</a>
-            <a href="#testimonials" aria-current={active==="testimonials"?"page":undefined}
-               className={`underline-soft transition-colors ${active==="testimonials"?"text-white":"text-gray-300 hover:text-white"}`}>Testimonials</a>
-            <a href="#pricing" aria-current={active==="pricing"?"page":undefined}
-               className={`underline-soft transition-colors ${active==="pricing"?"text-white":"text-gray-300 hover:text-white"}`}>Pricing</a>
-            <Link href="/blueprints" className="underline-soft text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
+            <a href="#features" aria-current={isHome && active==="features"?"page":undefined}
+               className={`underline-soft nav-link transition-colors ${active==="features"?"text-white":"text-gray-300 hover:text-white"}`}>Features</a>
+            <a href="#how-it-works" aria-current={isHome && active==="how-it-works"?"page":undefined}
+               className={`underline-soft nav-link transition-colors ${active==="how-it-works"?"text-white":"text-gray-300 hover:text-white"}`}>How it works</a>
+            <a href="#testimonials" aria-current={isHome && active==="testimonials"?"page":undefined}
+               className={`underline-soft nav-link transition-colors ${active==="testimonials"?"text-white":"text-gray-300 hover:text-white"}`}>Testimonials</a>
+            <a href="#pricing" aria-current={isHome && active==="pricing"?"page":undefined}
+               className={`underline-soft nav-link transition-colors ${active==="pricing"?"text-white":"text-gray-300 hover:text-white"}`}>Pricing</a>
+            <Link href="/blueprints" className="underline-soft nav-link text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
         </nav>
 
           <div className="hidden md:flex items-center gap-2">

@@ -27,11 +27,20 @@ from pydantic import BaseModel
 
 # Load env once (prefer .env.local) - skip if there are encoding issues
 try:
-    load_dotenv('.env.local')
-    load_dotenv()
+    from pathlib import Path
+    
+    # Load .env from this file's directory (data-pipeline/)
+    env_path = Path(__file__).parent / '.env'
+    env_local_path = Path(__file__).parent / '.env.local'
+    
+    if env_local_path.exists():
+        load_dotenv(dotenv_path=env_local_path)
+    elif env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+    else:
+        load_dotenv()  # Try current directory as fallback
 except Exception as e:
-    print(f"Warning: Could not load .env files: {e}")
-    print("Using system environment variables instead")
+    pass  # Silently continue if .env loading fails
 
 # Local imports
 from retriever_agent import RetrieverAgent
@@ -91,9 +100,14 @@ def init_agents() -> None:
     try:
         retriever_agent = RetrieverAgent()
         retriever_ok = True
-    except Exception:
+        print("[OK] Retriever Agent initialized successfully")
+    except Exception as e:
         retriever_agent = None
         retriever_ok = False
+        print(f"[ERROR] Retriever Agent failed to initialize: {e}")
+        print("[WARNING] Pipeline will run WITHOUT contextual data!")
+        print("[WARNING] All generated blueprints will be generic and similar.")
+        print("[WARNING] See DIAGNOSTIC_REPORT.md and data-pipeline/QUICK_FIX.md for solutions.")
     writer_agent = WriterAgent()
     reviewer_agent = ReviewerAgent()
     exporter_agent = ExporterAgent()
@@ -135,9 +149,18 @@ def generate(req: GenerateRequest) -> GenerateResponse:
                     {"content": d.content, "source": d.source, "score": d.relevance_score}
                     for d in context.retrieved_documents
                 ]
-            except Exception:
+                print(f"[OK] Retrieved {len(contexts)} context chunks for query: '{req.query[:50]}...'")
+            except Exception as e:
                 # Fall back to empty context
+                print(f"[ERROR] Context retrieval failed: {e}")
                 contexts = []
+        else:
+            print("[WARNING] No retriever available - generating without context")
+
+        if not contexts:
+            print(f"[WARNING] ZERO context retrieved for query: '{req.query}'")
+            print("   LLM will generate generic content without real-world data.")
+            print("   Result may be similar to other blueprints.")
 
         # Write draft
         draft = writer_agent.write(req.query, contexts)

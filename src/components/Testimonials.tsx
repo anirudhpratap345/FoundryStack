@@ -33,8 +33,24 @@ export default function Testimonials() {
   return (
     <section className="relative z-10 container mx-auto px-6 py-20" id="testimonials">
       <div className="text-center mb-12">
-        <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">What founders say</h3>
-        <p className="text-gray-300 mt-3">Real outcomes from teams using FoundryStack</p>
+        <motion.h3 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl md:text-4xl font-bold text-white tracking-tight"
+        >
+          What founders say
+        </motion.h3>
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-gray-300 mt-3"
+        >
+          Real outcomes from teams using FoundryStack
+        </motion.p>
       </div>
 
       <div className="max-w-4xl mx-auto">
@@ -46,7 +62,7 @@ export default function Testimonials() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
           >
-            <GlassCard variant="strong" glow="purple" className="text-center p-10">
+            <GlassCard variant="strong" glow="purple" className="text-center p-10 glow-border">
               <p className="text-xl md:text-2xl text-white/95 leading-relaxed tracking-tight mb-6">
                 “{testimonials[index].quote}”
               </p>
