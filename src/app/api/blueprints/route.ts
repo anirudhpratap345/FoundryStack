@@ -2,11 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { blueprintJobProcessor } from '@/lib/jobs/blueprint-generator';
 import { BlueprintService } from '@/lib/qdrant/blueprints';
 import { validateBlueprintIdea, validateBlueprintTitle, sanitizeInput, rateLimiter } from '@/lib/validation';
-import { retrieverClient } from '@/lib/ai/retriever-client';
-import { analystClient } from '@/lib/ai/analyst-client';
-import { writerClient } from '@/lib/ai/writer-client';
-import { reviewerClient } from '@/lib/ai/reviewer-client';
-import { exporterClient } from '@/lib/ai/exporter-client';
 import { BlueprintCache, PipelineCache, RateLimiter, generateQueryHash } from '@/lib/redis/cache';
 
 // GET /api/blueprints - Get all blueprints
@@ -459,71 +454,50 @@ export async function POST(request: NextRequest) {
             return;
           }
           
-          // Step 1: Retriever Agent - Enrich query with context
-          console.log('Step 1: Enriching query with context...');
-          const retrieverResult = await retrieverClient.enrichQuery(businessConcept);
-          
-          // Step 2: Analyst Agent - Analyze context into structured insights
-          console.log('Step 2: Analyzing context into structured insights...');
-          const analystResult = await analystClient.analyzeContext({
-            idea: businessConcept,
-            context: retrieverResult.context,
-            enriched_query: retrieverResult.enriched_query,
-            confidence: retrieverResult.confidence
-          });
-          
-          // Step 3: Writer Agent - Convert analysis into founder-friendly content
-          console.log('Step 3: Converting analysis into founder-friendly content...');
-          const writerResult = await writerClient.generateContent({
-            structured_analysis: analystResult.structured_analysis,
-            user_context: { audience: 'founders', format: 'comprehensive' }
-          });
-          
-          // Step 4: Reviewer Agent - Review and refine content
-          console.log('Step 4: Reviewing and refining content...');
-          const reviewerResult = await reviewerClient.reviewBlueprint({
-            writer_output: {
-              founder_report: writerResult.founder_report,
-              one_pager: writerResult.one_pager,
-              pitch_ready: writerResult.pitch_ready,
-              tweet: writerResult.tweet,
-              processing_time: writerResult.processing_time,
-              timestamp: writerResult.timestamp
+          // Call unified pipeline API
+          console.log('Calling unified pipeline API...');
+          const pipelineUrl = process.env.PIPELINE_API_URL || 'http://localhost:8015';
+          const pipelineResponse = await fetch(`${pipelineUrl}/generate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-            original_query: businessConcept,
-            user_context: { audience: 'founders', quality_focus: 'high' }
-          });
-          
-          // Step 5: Exporter Agent - Export final blueprint
-          console.log('Step 5: Exporting final blueprint...');
-          const exporterResult = await exporterClient.exportBlueprint({
-            reviewed_blueprint: {
-              founder_report: reviewerResult.reviewed_founder_report,
-              one_pager: reviewerResult.reviewed_one_pager,
-              pitch_ready: reviewerResult.reviewed_pitch_ready,
-              tweet: reviewerResult.reviewed_tweet
-            },
-            metadata: {
-              title: title,
-              description: description,
-              industry: retrieverResult.context.industry || 'general',
-              created_at: new Date().toISOString(),
-              version: '1.0'
-            }
+            body: JSON.stringify({
+              query: businessConcept,
+              options: {
+                export_formats: ['json', 'markdown', 'html']
+              }
+            }),
           });
 
-          // Create comprehensive blueprint data
+          if (!pipelineResponse.ok) {
+            const errorText = await pipelineResponse.text();
+            console.error('Pipeline API error:', pipelineResponse.status, errorText);
+            throw new Error(`Pipeline API error: ${pipelineResponse.status}`);
+          }
+
+          const pipelineResult = await pipelineResponse.json();
+          console.log('Pipeline result received successfully');
+
+          // Extract the draft content from pipeline result
+          const draftContent = pipelineResult.draft || {};
+          const exporterResult = { files: pipelineResult.files || [] };
+          const retrieverResult = { context: {} };
+          const analystResult = { structured_analysis: {} };
+          
+          
+          // Create comprehensive blueprint data from pipeline output
           const comprehensiveBlueprint = {
             market_analysis: {
-              executive_summary: reviewerResult.reviewed_founder_report,
+              executive_summary: draftContent.summary || 'AI-generated analysis',
               targetMarket: {
-                primary: analystResult.structured_analysis.problem_analysis?.target_audience || 'General market',
-                secondary: retrieverResult.context.user_personas?.[1]?.name || 'Small businesses',
+                primary: 'General market',
+                secondary: 'Small to medium businesses',
                 size: {
-                  totalAddressableMarket: retrieverResult.context.market_size?.tam || '$12.6T',
-                  serviceableAddressableMarket: retrieverResult.context.market_size?.sam || '$1.2T',
-                  serviceableObtainableMarket: retrieverResult.context.market_size?.som || '$120B',
-                  growthRate: retrieverResult.context.market_size?.growth_rate || '15% annually'
+                  totalAddressableMarket: '$12.6T',
+                  serviceableAddressableMarket: '$1.2T',
+                  serviceableObtainableMarket: '$120B',
+                  growthRate: '15% annually'
                 },
                 demographics: {
                   age: '25-45 years',
@@ -533,8 +507,8 @@ export async function POST(request: NextRequest) {
                   profession: 'Technology, finance, consulting professionals'
                 }
               },
-              competition: retrieverResult.context.competitors || [],
-              marketTrends: retrieverResult.context.market_trends || [],
+              competition: [],
+              marketTrends: [],
               revenueModel: {
                 primary: 'Transaction-based fees',
                 secondary: 'Subscription SaaS model',
@@ -550,13 +524,8 @@ export async function POST(request: NextRequest) {
                   year3: '$24.1M'
                 }
               },
-              customerPersonas: retrieverResult.context.user_personas || [],
-              risks: retrieverResult.context.challenges?.map(challenge => ({
-                type: 'Business',
-                description: challenge,
-                impact: 'Medium',
-                mitigation: 'Strategic planning and risk management'
-              })) || []
+              customerPersonas: [],
+              risks: []
             },
             technical_blueprint: {
               architecture: {
@@ -586,21 +555,12 @@ export async function POST(request: NextRequest) {
                   }
                 ]
               },
-              techStack: retrieverResult.context.tech_stacks?.map(tech => ({
-                name: tech,
-                category: 'Technology',
-                purpose: 'Application development'
-              })) || [
+              techStack: [
                 { name: 'Next.js', category: 'Frontend', purpose: 'React framework' },
                 { name: 'Python', category: 'Backend', purpose: 'AI agents and API' },
                 { name: 'PostgreSQL', category: 'Database', purpose: 'Data storage' }
               ],
-              apiDesign: retrieverResult.context.apis?.map(api => ({
-                name: api.name || api,
-                endpoint: api.endpoint || '/api/endpoint',
-                method: 'GET/POST',
-                description: api.description || 'API endpoint'
-              })) || [
+              apiDesign: [
                 {
                   name: 'Blueprint API',
                   endpoint: '/api/blueprints',

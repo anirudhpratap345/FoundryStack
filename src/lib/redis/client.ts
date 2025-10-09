@@ -6,8 +6,18 @@ const redisConfig = getRedisConfig();
 
 // Create Redis client
 let redisClient: RedisClientType | null = null;
+let useMockClient = false;
+let mockClient: RedisClientType | null = null;
 
 export const getRedisClient = async (): Promise<RedisClientType> => {
+  // If we're using mock client, return it immediately
+  if (useMockClient) {
+    if (!mockClient) {
+      mockClient = createMockRedisClient();
+    }
+    return mockClient;
+  }
+  
   if (!redisClient) {
     try {
       redisClient = createClient(redisConfig);
@@ -30,9 +40,13 @@ export const getRedisClient = async (): Promise<RedisClientType> => {
       
       await redisClient.connect();
     } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-      // Return a mock client for development
-      return createMockRedisClient();
+      console.error('Failed to connect to Redis, using mock client:', error);
+      // Switch to mock client mode
+      useMockClient = true;
+      if (!mockClient) {
+        mockClient = createMockRedisClient();
+      }
+      return mockClient;
     }
   }
   

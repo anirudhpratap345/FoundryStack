@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import Navbar from "@/components/Navbar";
+import ScrollProgress from "@/components/ScrollProgress";
+import SkipToContent from "@/components/SkipToContent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ScrollProgress />
+        <SkipToContent />
+        <Navbar />
         <ErrorBoundary>
-          {children}
+          <main id="main">
+            {children}
+          </main>
         </ErrorBoundary>
       </body>
     </html>

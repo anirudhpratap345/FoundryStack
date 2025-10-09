@@ -3,18 +3,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Plus, Eye, Trash2, Calendar, Clock, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
-import { getBlueprints, deleteBlueprint } from "@/lib/api/client";
+import { getBlueprints, deleteBlueprint, Blueprint } from "@/lib/api/client";
 import Link from "next/link";
 import { BlueprintListSkeleton } from "@/components/LoadingSkeleton";
-
-interface Blueprint {
-  id: string;
-  title: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function BlueprintsPage() {
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
@@ -88,7 +79,7 @@ export default function BlueprintsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden pt-28">
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -103,7 +94,7 @@ export default function BlueprintsPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden pt-28">
       {/* Animated background */}
       <div className="absolute inset-0 animated-gradient opacity-20"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
@@ -203,11 +194,11 @@ export default function BlueprintsPage() {
                 <div className="space-y-3 text-sm text-gray-400 mb-6">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-4 w-4" />
-                    Created {formatDate(blueprint.createdAt)}
+                    Created {formatDate(blueprint.created_at)}
                   </div>
                   <div className="flex items-center gap-3">
                     <Clock className="h-4 w-4" />
-                    Updated {formatDate(blueprint.updatedAt)}
+                    Updated {formatDate(blueprint.updated_at)}
                   </div>
                 </div>
 

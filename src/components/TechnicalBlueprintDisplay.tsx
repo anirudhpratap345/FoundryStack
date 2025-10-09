@@ -1,6 +1,83 @@
 "use client";
 
-import { TechnicalBlueprint } from "@/lib/ai/openai";
+// Define TechnicalBlueprint interface locally since we're using Qdrant now
+interface TechnicalBlueprint {
+  architecture: {
+    overview: string;
+    pattern: string;
+    dataFlow: string;
+    components: Array<{
+      name: string;
+      description: string;
+      responsibilities: string[];
+    }>;
+  };
+  techStack: Array<{
+    name: string;
+    category: string;
+    purpose: string;
+  }>;
+  apiDesign: Array<{
+    name: string;
+    endpoint: string;
+    method: string;
+    description: string;
+  }>;
+  databaseSchema: {
+    overview: string;
+    scaling: string;
+    backup: string;
+    migrations: string;
+    tables: Array<{
+      name: string;
+      description: string;
+      columns: string[];
+      indexes: string[];
+    }>;
+  };
+  security: {
+    authentication: string;
+    authorization: string;
+    dataEncryption: string;
+    apiSecurity: string;
+    vulnerabilityManagement: string;
+    compliance: string;
+  };
+  performance: {
+    optimization: string;
+    caching: string;
+    cdn: string;
+    loadBalancing: string;
+    monitoring: string;
+  };
+  deployment: {
+    strategy: string;
+    infrastructure: string;
+    environments: Array<{
+      name: string;
+      url: string;
+    }>;
+    ciCd: string;
+    scaling: string;
+    disasterRecovery: string;
+  };
+  monitoring: {
+    tools: Array<{
+      name: string;
+      purpose: string;
+    }>;
+    metrics: string;
+    alerting: string;
+    logging: string;
+    observability: string;
+  };
+  costOptimization: {
+    infrastructure: string;
+    licensing: string;
+    scaling: string;
+    budget: string;
+  };
+}
 import { Code, Database, Shield, Zap, Server, Monitor, DollarSign, GitBranch, Layers, Cpu, Globe, BarChart3 } from "lucide-react";
 
 interface TechnicalBlueprintDisplayProps {

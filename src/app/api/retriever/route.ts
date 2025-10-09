@@ -4,25 +4,32 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Forward the request to the Retriever Agent
-    const response = await fetch('http://localhost:8000/enrich', {
+    // Forward the request to the unified pipeline API
+    const pipelineUrl = process.env.PIPELINE_API_URL || 'http://localhost:8015';
+    const response = await fetch(`${pipelineUrl}/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        query: body.query || body.idea || 'Retrieve context for this business concept',
+        options: {
+          export_formats: ['json']
+        }
+      }),
     });
 
     if (!response.ok) {
-      throw new Error(`Retriever Agent error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Pipeline API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Retriever Agent proxy error:', error);
+    console.error('Pipeline API proxy error:', error);
     return NextResponse.json(
-      { error: 'Failed to enrich query with Retriever Agent' },
+      { error: 'Failed to enrich query with Pipeline API' },
       { status: 500 }
     );
   }

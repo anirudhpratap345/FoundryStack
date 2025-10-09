@@ -10,9 +10,8 @@ export const config = {
   
   // Database configuration
   database: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    qdrantUrl: process.env.QDRANT_URL!,
+    qdrantApiKey: process.env.QDRANT_API_KEY!,
   },
   
   // AI configuration
@@ -52,9 +51,8 @@ export const config = {
 // Validate required environment variables
 export function validateConfig() {
   const required = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY',
+    'QDRANT_URL',
+    'QDRANT_API_KEY',
     'GEMINI_API_KEY'
   ];
   

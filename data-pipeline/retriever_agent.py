@@ -16,7 +16,11 @@ from dotenv import load_dotenv
 from qdrant_manager import QdrantManager
 
 # Load environment variables
-load_dotenv()
+try:
+    load_dotenv()
+except Exception as e:
+    print(f"Warning: Could not load .env file: {e}")
+    print("Using system environment variables instead")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

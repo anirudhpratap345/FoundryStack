@@ -6,8 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight, AlertCircle } from "lucide-react";
 import { createBlueprint } from "@/lib/api/client";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import Testimonials from "@/components/Testimonials";
+import Pricing from "@/components/Pricing";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
+import HowItWorksModal from "@/components/HowItWorksModal";
 import { validateBlueprintIdea } from "@/lib/validation";
 import Link from "next/link";
 
@@ -17,6 +20,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [howOpen, setHowOpen] = useState(false);
 
   const generateTitle = (idea: string): string => {
     // Extract key concepts from the idea
@@ -175,50 +179,10 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       <AnimatedBackground />
       
-      {/* Header */}
-      <motion.header 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-20 border-b border-white/10 glass-subtle"
-      >
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex items-center space-x-3"
-            >
-              <motion.div 
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-                className="p-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 glow-blue"
-              >
-                <Sparkles className="h-6 w-6 text-white" />
-              </motion.div>
-              <h1 className="text-2xl font-bold text-white">FoundryStack</h1>
-            </motion.div>
-            <motion.nav 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="hidden md:flex space-x-8"
-            >
-              <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-              <Link href="/blueprints" className="text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
-              <Link href="/test-pipeline" className="text-gray-300 hover:text-white transition-colors">Test Pipeline</Link>
-              <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-              <AnimatedButton variant="outline" size="sm">
-                Sign In
-              </AnimatedButton>
-            </motion.nav>
-          </div>
-        </div>
-      </motion.header>
+      {/* Note: Global Navbar is provided by layout.tsx (fixed). */}
 
       {/* Hero Section */}
-      <section className="relative z-10 container mx-auto px-6 py-20">
+      <section className="relative z-10 container mx-auto px-6 pt-28 pb-20">
         <div className="text-center max-w-6xl mx-auto">
           {/* Badge */}
           <motion.div 
@@ -274,8 +238,9 @@ export default function Home() {
             </AnimatedButton>
             <AnimatedButton 
               variant="outline" 
-              size="lg"
+              size="lg" 
               delay={1.0}
+              onClick={()=>setHowOpen(true)}
             >
               <Play className="h-5 w-5" />
               How it works
@@ -553,6 +518,14 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <HowItWorksModal open={howOpen} onClose={()=>setHowOpen(false)} />
+
+      {/* Testimonials */}
+      <Testimonials />
+
+      {/* Pricing */}
+      <Pricing />
 
       {/* Footer */}
       <motion.footer 

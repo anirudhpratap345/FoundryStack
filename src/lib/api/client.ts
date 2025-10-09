@@ -5,15 +5,53 @@ const API_BASE = '/api';
 export interface Blueprint {
   id: string;
   title: string;
-  description: string;
-  idea?: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  marketAnalysis?: any;
-  technicalBlueprint?: any;
-  implementationPlan?: any;
-  codeTemplates?: any[];
+  description?: string;
+  idea: string;
+  market_analysis?: any;
+  technical_blueprint?: any;
+  implementation_plan?: any;
+  code_templates?: any[];
+  status: 'PENDING' | 'IN_PROGRESS' | 'ANALYZING' | 'COMPLETED' | 'FAILED';
+  created_at: string;
+  updated_at: string;
+  user_id?: string;
+  tags?: string[];
+  category?: string;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+  estimated_duration?: string;
+  complexity?: 'SIMPLE' | 'MODERATE' | 'COMPLEX';
+  technologies?: string[];
+  business_model?: string;
+  target_audience?: string;
+  revenue_streams?: string[];
+  competitive_analysis?: string;
+  risk_assessment?: string;
+  success_metrics?: string[];
+  next_steps?: string[];
+  resources_needed?: string[];
+  timeline?: string;
+  budget_estimate?: string;
+  team_requirements?: string[];
+  technical_requirements?: string[];
+  market_opportunity?: string;
+  value_proposition?: string;
+  go_to_market_strategy?: string;
+  scalability_plan?: string;
+  monetization_strategy?: string;
+  partnerships?: string[];
+  legal_considerations?: string;
+  regulatory_compliance?: string;
+  intellectual_property?: string;
+  data_privacy?: string;
+  security_requirements?: string;
+  performance_metrics?: string[];
+  user_feedback?: string[];
+  iteration_history?: string[];
+  version?: string;
+  dependencies?: string[];
+  integrations?: string[];
+  api_requirements?: string[];
+  database_requirements?: string[];
 }
 
 export interface BlueprintJob {
@@ -132,7 +170,7 @@ export async function regenerateBlueprint(id: string, prompt: string): Promise<B
   }
   
   const data = await response.json();
-  return data.blueprint;
+  return data.blueprint; 
 }
 
 
@@ -154,46 +192,46 @@ export function exportBlueprintAsMarkdown(blueprint: Blueprint): void {
   let markdown = `# ${blueprint.title}\n\n`;
   markdown += `**Description:** ${blueprint.description}\n\n`;
   markdown += `**Status:** ${blueprint.status}\n`;
-  markdown += `**Created:** ${new Date(blueprint.createdAt).toLocaleDateString()}\n\n`;
+  markdown += `**Created:** ${new Date(blueprint.created_at).toLocaleDateString()}\n\n`;
 
-  if (blueprint.marketAnalysis) {
+  if (blueprint.market_analysis) {
     markdown += `## Market Analysis\n\n`;
-    markdown += `**Target Market:** ${blueprint.marketAnalysis.targetMarket}\n\n`;
-    markdown += `**Positioning:** ${blueprint.marketAnalysis.positioning}\n\n`;
-    markdown += `**Revenue Model:** ${blueprint.marketAnalysis.revenueModel}\n\n`;
-    markdown += `**Market Size:** ${blueprint.marketAnalysis.marketSize}\n\n`;
+    markdown += `**Target Market:** ${blueprint.market_analysis.targetMarket}\n\n`;
+    markdown += `**Positioning:** ${blueprint.market_analysis.positioning}\n\n`;
+    markdown += `**Revenue Model:** ${blueprint.market_analysis.revenueModel}\n\n`;
+    markdown += `**Market Size:** ${blueprint.market_analysis.marketSize}\n\n`;
     
-    if (blueprint.marketAnalysis.competition && blueprint.marketAnalysis.competition.length > 0) {
+    if (blueprint.market_analysis.competition && blueprint.market_analysis.competition.length > 0) {
       markdown += `### Competition\n\n`;
-      blueprint.marketAnalysis.competition.forEach((comp: any) => {
+      blueprint.market_analysis.competition.forEach((comp: any) => {
         markdown += `- **${comp.name}:** ${comp.description}\n`;
       });
       markdown += `\n`;
     }
   }
   
-  if (blueprint.technicalBlueprint) {
+  if (blueprint.technical_blueprint) {
     markdown += `## Technical Blueprint\n\n`;
-    markdown += `**Architecture:** ${blueprint.technicalBlueprint.architecture}\n\n`;
-    markdown += `**Database Schema:** ${blueprint.technicalBlueprint.databaseSchema}\n\n`;
-    markdown += `**Deployment Strategy:** ${blueprint.technicalBlueprint.deploymentStrategy}\n\n`;
+    markdown += `**Architecture:** ${blueprint.technical_blueprint.architecture}\n\n`;
+    markdown += `**Database Schema:** ${blueprint.technical_blueprint.databaseSchema}\n\n`;
+    markdown += `**Deployment Strategy:** ${blueprint.technical_blueprint.deploymentStrategy}\n\n`;
     
-    if (blueprint.technicalBlueprint.techStack && blueprint.technicalBlueprint.techStack.length > 0) {
+    if (blueprint.technical_blueprint.techStack && blueprint.technical_blueprint.techStack.length > 0) {
       markdown += `### Tech Stack\n\n`;
-      blueprint.technicalBlueprint.techStack.forEach((tech: any) => {
+      blueprint.technical_blueprint.techStack.forEach((tech: any) => {
         markdown += `- **${tech.category}:** ${tech.name} ${tech.version} - ${tech.rationale}\n`;
       });
       markdown += `\n`;
     }
   }
   
-  if (blueprint.implementationPlan) {
+  if (blueprint.implementation_plan) {
     markdown += `## Implementation Plan\n\n`;
-    markdown += `**Total Duration:** ${blueprint.implementationPlan.totalWeeks} weeks\n\n`;
+    markdown += `**Total Duration:** ${blueprint.implementation_plan.totalWeeks} weeks\n\n`;
     
-    if (blueprint.implementationPlan.sprints && blueprint.implementationPlan.sprints.length > 0) {
+    if (blueprint.implementation_plan.sprints && blueprint.implementation_plan.sprints.length > 0) {
       markdown += `### Sprints\n\n`;
-      blueprint.implementationPlan.sprints.forEach((sprint: any) => {
+      blueprint.implementation_plan.sprints.forEach((sprint: any) => {
         markdown += `#### Week ${sprint.week}: ${sprint.title}\n\n`;
         markdown += `${sprint.description}\n\n`;
         if (sprint.tasks && sprint.tasks.length > 0) {

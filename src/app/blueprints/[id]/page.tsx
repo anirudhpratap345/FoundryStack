@@ -4,35 +4,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowLeft, Target, FileText, Clock, Github, Brain, Circle, Trash2, RefreshCw } from "lucide-react";
-import { getBlueprint, regenerateBlueprint, exportBlueprint, exportBlueprintAsMarkdown, deleteBlueprint } from "@/lib/api/client";
+import { getBlueprint, regenerateBlueprint, exportBlueprint, exportBlueprintAsMarkdown, deleteBlueprint, Blueprint } from "@/lib/api/client";
 import Link from "next/link";
 import MarketAnalysisDisplay from "@/components/MarketAnalysisDisplay";
 import TechnicalBlueprintDisplay from "@/components/TechnicalBlueprintDisplay";
 import { BlueprintDetailSkeleton } from "@/components/LoadingSkeleton";
-
-interface Blueprint {
-  id: string;
-  title: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  marketAnalysis?: any;
-  technicalBlueprint?: any;
-  implementationPlan?: any;
-  codeTemplates?: Array<{
-    name: string;
-    description: string;
-    language: string;
-    framework?: string;
-    repositoryUrl?: string;
-    files: Array<{
-      path: string;
-      content: string;
-      description: string;
-    }>;
-  }>;
-}
 
 export default function BlueprintDetailPage() {
   const params = useParams();
@@ -71,14 +47,18 @@ export default function BlueprintDetailPage() {
 
 
   const handleRegenerate = async () => {
-    if (!params.id) return;
+    if (!params.id || !blueprint) return;
+    
+    // Use the original idea/description as the prompt for regeneration
+    const prompt = blueprint.description || `Create a comprehensive startup blueprint for: ${blueprint.title}`;
     
     setRegenerating(true);
     try {
-      const updatedBlueprint = await regenerateBlueprint(params.id as string);
+      const updatedBlueprint = await regenerateBlueprint(params.id as string, prompt);
       setBlueprint(updatedBlueprint);
     } catch (error) {
       console.error('Failed to regenerate blueprint:', error);
+      alert('Failed to regenerate blueprint. Please try again.');
     } finally {
       setRegenerating(false);
     }
@@ -148,7 +128,7 @@ export default function BlueprintDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden pt-28">
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -164,7 +144,7 @@ export default function BlueprintDetailPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden pt-28">
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -187,7 +167,7 @@ export default function BlueprintDetailPage() {
 
   if (!blueprint) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden pt-28">
         <div className="absolute inset-0 animated-gradient opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -205,7 +185,7 @@ export default function BlueprintDetailPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden pt-28">
       {/* Animated background */}
       <div className="absolute inset-0 animated-gradient opacity-20"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50"></div>
@@ -316,28 +296,28 @@ export default function BlueprintDetailPage() {
                 </div>
               )}
               {/* Market Analysis */}
-              {blueprint.marketAnalysis && (
-                <MarketAnalysisDisplay analysis={blueprint.marketAnalysis} />
+              {blueprint.market_analysis && (
+                <MarketAnalysisDisplay analysis={blueprint.market_analysis} />
               )}
 
               {/* Technical Blueprint */}
-              {blueprint.technicalBlueprint && (
-                <TechnicalBlueprintDisplay blueprint={blueprint.technicalBlueprint} />
+              {blueprint.technical_blueprint && (
+                <TechnicalBlueprintDisplay blueprint={blueprint.technical_blueprint} />
               )}
 
               {/* Implementation Plan */}
-              {blueprint.implementationPlan && (
+              {blueprint.implementation_plan && (
                 <div className="glass rounded-2xl p-8 border border-white/10">
                                            <div className="flex items-center gap-3 mb-4">
                            <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-800">
                              <Clock className="h-5 w-5 text-white" />
                            </div>
                            <h3 className="text-xl font-semibold text-white">
-                             Implementation Plan ({blueprint.implementationPlan.totalWeeks} weeks)
+                             Implementation Plan ({blueprint.implementation_plan.totalWeeks} weeks)
                            </h3>
                          </div>
                   <div className="space-y-8">
-                    {blueprint.implementationPlan.sprints.map((sprint: any, index: number) => (
+                    {blueprint.implementation_plan.sprints.map((sprint: any, index: number) => (
                       <div key={index} className="border-l-4 border-purple-500/50 pl-6">
                         <h4 className="font-semibold text-white mb-2 text-base">
                           Week {sprint.week}: {sprint.title}
@@ -433,7 +413,7 @@ export default function BlueprintDetailPage() {
               </div>
 
               {/* Code Templates */}
-              {blueprint.codeTemplates && blueprint.codeTemplates.length > 0 && (
+              {blueprint.code_templates && blueprint.code_templates.length > 0 && (
                 <div id="code-templates" className="glass rounded-2xl p-6 border border-white/10">
                                            <div className="flex items-center gap-3 mb-4">
                            <div className="p-2 rounded-lg bg-gradient-to-r from-blue-700 to-blue-900">
@@ -442,7 +422,7 @@ export default function BlueprintDetailPage() {
                            <h3 className="text-lg font-semibold text-white">Code Templates</h3>
                          </div>
                   <div className="space-y-4">
-                    {blueprint.codeTemplates?.map((template: any, index: number) => (
+                    {blueprint.code_templates?.map((template: any, index: number) => (
                       <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
                         <h4 className="font-medium text-white mb-2 text-sm">{template.name}</h4>
                         <p className="text-xs text-gray-300 mb-3 leading-relaxed">{template.description}</p>

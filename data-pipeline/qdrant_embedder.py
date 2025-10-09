@@ -19,6 +19,9 @@ try:
     load_dotenv()  # Load .env file from current directory
 except ImportError:
     pass  # dotenv not available, use system env vars
+except Exception as e:
+    print(f"Warning: Could not load .env file: {e}")
+    print("Using system environment variables instead")
 
 try:
     from qdrant_manager import QdrantManager

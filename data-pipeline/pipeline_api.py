@@ -25,9 +25,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-# Load env once (prefer .env.local)
-load_dotenv('.env.local')
-load_dotenv()
+# Load env once (prefer .env.local) - skip if there are encoding issues
+try:
+    load_dotenv('.env.local')
+    load_dotenv()
+except Exception as e:
+    print(f"Warning: Could not load .env files: {e}")
+    print("Using system environment variables instead")
 
 # Local imports
 from retriever_agent import RetrieverAgent

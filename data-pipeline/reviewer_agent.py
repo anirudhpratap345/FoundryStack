@@ -58,8 +58,12 @@ except Exception:  # pragma: no cover - imports validated in smoke tests
 
 
 # Load environment variables, prioritizing .env.local
-load_dotenv('.env.local')
-load_dotenv()
+try:
+    load_dotenv('.env.local')
+    load_dotenv()
+except Exception as e:
+    print(f"Warning: Could not load .env files: {e}")
+    print("Using system environment variables instead")
 logger = logging.getLogger(__name__)
 
 
