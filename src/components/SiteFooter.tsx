@@ -9,12 +9,12 @@ export default function SiteFooter() {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
           <div className="text-center md:text-left">
-            <div className="text-white font-bold text-lg mb-2">FoundryStack</div>
-            <div className="text-gray-400 text-sm">© {new Date().getFullYear()} FoundryStack. All rights reserved.</div>
+            <div className="text-white font-bold text-lg mb-2">Finance Copilot</div>
+            <div className="text-gray-400 text-sm">© {new Date().getFullYear()} Finance Copilot. All rights reserved.</div>
           </div>
           <nav className="flex items-center gap-6 text-gray-300">
-            <Link href="/blueprints" className="hover:text-white">Blueprints</Link>
-            <Link href="/docs" className="hover:text-white">Docs</Link>
+            <Link href="/finance-copilot" className="hover:text-white">Get Strategy</Link>
+            <Link href="/#how-it-works" className="hover:text-white">How It Works</Link>
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
             <Link href="/terms" className="hover:text-white">Terms</Link>
           </nav>

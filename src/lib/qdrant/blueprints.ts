@@ -23,7 +23,7 @@ export interface Blueprint {
   technical_blueprint?: string;
   implementation_plan?: string;
   code_templates?: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  status: 'PENDING' | 'IN_PROGRESS' | 'ANALYZING' | 'COMPLETED' | 'FAILED';
   created_at: string;
   updated_at: string;
   user_id?: string;
@@ -83,7 +83,11 @@ export interface BlueprintInsert {
   title: string;
   idea: string;
   description?: string;
-  status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  market_analysis?: string;
+  technical_blueprint?: string;
+  implementation_plan?: string;
+  code_templates?: string;
+  status?: 'PENDING' | 'IN_PROGRESS' | 'ANALYZING' | 'COMPLETED' | 'FAILED';
   user_id?: string;
   tags?: string[];
   category?: string;
@@ -145,7 +149,7 @@ export interface BlueprintUpdate {
   technical_blueprint?: string;
   implementation_plan?: string;
   code_templates?: string;
-  status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  status?: 'PENDING' | 'IN_PROGRESS' | 'ANALYZING' | 'COMPLETED' | 'FAILED';
   tags?: string[];
   category?: string;
   priority?: 'LOW' | 'MEDIUM' | 'HIGH';

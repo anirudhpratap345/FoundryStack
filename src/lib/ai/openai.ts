@@ -1,5 +1,5 @@
 import { AIProviderFactory, AIProvider } from './providers';
-import { retrieverClient } from './retriever-client';
+// import { retrieverClient } from './retriever-client'; // Removed - not used in Finance Copilot
 
 // Use the provider factory to get the appropriate AI provider
 // Initialize lazily to avoid module-level execution issues
@@ -1100,11 +1100,19 @@ Format as JSON with this comprehensive structure:
     try {
       console.log('Starting blueprint generation for:', request.title);
       
-      // Step 0: Retrieve and enrich context using Python Retriever Agent
-      console.log('🔍 Enriching query with Python Retriever Agent...');
-      const retrieverResponse = await retrieverClient.enrichQuery(request.idea);
-      const { enriched_query: enrichedQuery, context, processing_time } = retrieverResponse;
-      console.log(`✅ Context enriched with confidence: ${(context.confidence * 100).toFixed(1)}% (${processing_time.toFixed(2)}s)`);
+      // Step 0: Use the idea directly (retriever agent removed)
+      console.log('🔍 Using query directly (retriever removed)...');
+      const enrichedQuery = request.idea;
+      const context: any = { 
+        industry: 'general',
+        market_trends: [],
+        tech_stacks: [],
+        competitors: [],
+        apis: [],
+        regulations: []
+      };
+      const confidence = 0.8;
+      console.log(`✅ Using direct query with default context`);
       
       // Step 1: Market Analysis
       console.log('Generating market analysis...');

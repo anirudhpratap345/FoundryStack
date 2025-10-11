@@ -234,9 +234,9 @@ export async function GET() {
               strategy: 'Blue-green deployment with zero downtime',
               infrastructure: 'AWS ECS with Fargate for serverless containers',
               environments: [
-                { name: 'Development', url: 'dev.foundrystack.com' },
-                { name: 'Staging', url: 'staging.foundrystack.com' },
-                { name: 'Production', url: 'foundrystack.com' }
+                { name: 'Development', url: 'dev.example.com' },
+                { name: 'Staging', url: 'staging.example.com' },
+                { name: 'Production', url: 'example.com' }
               ],
               ciCd: 'GitHub Actions with automated testing and deployment',
               scaling: 'Auto-scaling based on CPU and memory utilization',
@@ -394,10 +394,10 @@ export async function POST(request: NextRequest) {
         description: sanitizedDescription,
         idea: sanitizedIdea,
         status: 'ANALYZING',
-        market_analysis: null,
-        technical_blueprint: null,
-        implementation_plan: null,
-        code_templates: []
+        market_analysis: undefined,
+        technical_blueprint: undefined,
+        implementation_plan: undefined,
+        code_templates: undefined
       });
     } catch (dbError) {
       console.error('Database error, creating mock blueprint:', dbError);
@@ -428,11 +428,12 @@ export async function POST(request: NextRequest) {
           
           // Generate query hash for caching
           const queryHash = generateQueryHash(businessConcept);
+          console.log(`[CACHE] Query: "${businessConcept}" → Hash: ${queryHash}`);
           
           // Check if we have cached pipeline results
           const cachedPipeline = await PipelineCache.getPipeline(queryHash);
           if (cachedPipeline) {
-            console.log('Using cached pipeline results');
+            console.log(`[CACHE HIT] Returning cached blueprint for query hash: ${queryHash}`);
             
             // Update blueprint with cached results
             try {
@@ -455,6 +456,7 @@ export async function POST(request: NextRequest) {
           }
           
           // Call unified pipeline API
+          console.log(`[CACHE MISS] Generating new blueprint for query hash: ${queryHash}`);
           console.log('Calling unified pipeline API...');
           const pipelineUrl = process.env.PIPELINE_API_URL || 'http://localhost:8015';
           const pipelineResponse = await fetch(`${pipelineUrl}/generate`, {
@@ -601,9 +603,9 @@ export async function POST(request: NextRequest) {
                 strategy: 'Blue-green deployment with zero downtime',
                 infrastructure: 'AWS ECS with Fargate for serverless containers',
                 environments: [
-                  { name: 'Development', url: 'dev.foundrystack.com' },
-                  { name: 'Staging', url: 'staging.foundrystack.com' },
-                  { name: 'Production', url: 'foundrystack.com' }
+                  { name: 'Development', url: 'dev.example.com' },
+                  { name: 'Staging', url: 'staging.example.com' },
+                  { name: 'Production', url: 'example.com' }
                 ],
                 ciCd: 'GitHub Actions with automated testing and deployment',
                 scaling: 'Auto-scaling based on CPU and memory utilization',
@@ -678,10 +680,10 @@ export async function POST(request: NextRequest) {
           // Update blueprint with multi-agent generated content
           try {
             await BlueprintService.update(newBlueprint.id, {
-              market_analysis: comprehensiveBlueprint.market_analysis,
-              technical_blueprint: comprehensiveBlueprint.technical_blueprint,
-              implementation_plan: comprehensiveBlueprint.implementation_plan,
-              code_templates: comprehensiveBlueprint.code_templates,
+              market_analysis: JSON.stringify(comprehensiveBlueprint.market_analysis),
+              technical_blueprint: JSON.stringify(comprehensiveBlueprint.technical_blueprint),
+              implementation_plan: JSON.stringify(comprehensiveBlueprint.implementation_plan),
+              code_templates: JSON.stringify(comprehensiveBlueprint.code_templates),
               status: 'COMPLETED'
             });
           } catch (updateError) {

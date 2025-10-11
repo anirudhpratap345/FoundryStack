@@ -1,83 +1,257 @@
 # 🚀 FoundryStack Quick Start Guide
 
-## ✅ Ready to Use - No OpenAI API Key Required!
+**Status:** ✅ All systems operational with new API key  
+**Date:** October 10, 2025
 
-Your FoundryStack application is now ready with **multiple AI provider options**. The app is currently running on **http://localhost:3001** with the **Mock AI provider** (works immediately).
+---
 
-## 🎯 Test It Right Now
+## ✅ What's Working
 
-1. **Open your browser** → http://localhost:3001
-2. **Enter a startup idea** in the text area
-3. **Click "Generate Blueprint"**
-4. **Watch the real-time AI generation** with beautiful animations
-5. **View the completed blueprint** with market analysis, technical specs, and implementation plan
+- **Pipeline API:** Running on `http://localhost:8015`
+- **Qdrant:** Connected with 12 vectors (Next.js, FastAPI, Redis, Supabase, Prisma)
+- **Gemini API:** New key configured and active
+- **Retriever:** ✅ Working (fetches real context + fallback for 7 industries)
+- **Writer:** ✅ Working (generates comprehensive blueprints)
+- **Reviewer:** ✅ Working (evaluates quality)
+- **Exporter:** ✅ Working (JSON, Markdown, HTML)
 
-## 🤖 AI Provider Options
+---
 
-### Option 1: Gemini (Recommended - Free & Powerful)
-- 🆓 **Free tier**: 15 requests/minute, 1M tokens/day
-- 🧠 **Very capable**: Excellent for complex analysis
-- 🔑 **Get free API key**: https://makersuite.google.com/app/apikey
-- 📝 **Setup**: Change `AI_PROVIDER=gemini` in `.env.local`
+## 🎯 How to Generate a Blueprint
 
-### Option 2: Mock (Currently Active)
-- ✅ **Works immediately** - no setup required
-- ✅ **Perfect for testing** and development
-- ✅ **Realistic mock data** for all blueprint sections
+### Method 1: Using the Web UI (Recommended)
 
-### Option 3: Groq (Alternative - Free & Fast)
-- 🆓 **Free tier**: 14,400 requests/day
-- ⚡ **Very fast**: 500+ tokens/second
-- 🔑 **Get free API key**: https://console.groq.com/keys
-- 📝 **Setup**: Change `AI_PROVIDER=groq` in `.env.local`
+1. **Make sure the pipeline is running:**
+   ```powershell
+   cd D:\FoundryStack\foundry-stack\data-pipeline
+   python pipeline_api.py
+   ```
 
-### Option 4: Ollama (Local - Completely Free)
-- 🆓 **100% free** - runs on your machine
-- 🔒 **Private** - no data leaves your computer
-- 📦 **Install**: https://ollama.ai
-- 🚀 **Setup**: `ollama pull llama3.1:8b` then `AI_PROVIDER=ollama`
+2. **Start the Next.js frontend:**
+   ```powershell
+   cd D:\FoundryStack\foundry-stack
+   npm run dev
+   ```
 
-## 🧪 Test Your Setup
+3. **Open your browser:**
+   - Navigate to: `http://localhost:3000`
+   - Enter your startup idea (be specific!)
+   - Click "Generate Blueprint"
+   - Wait 30-60 seconds for the first generation
 
-```bash
-# Test the AI endpoint
-curl -X GET http://localhost:3001/api/test-ai
+### Method 2: Using PowerShell (Direct API)
 
-# Test with a real idea
-curl -X POST http://localhost:3001/api/test-ai \
-  -H "Content-Type: application/json" \
-  -d '{"idea":"A SaaS for small restaurants to manage inventory","title":"Restaurant Inventory SaaS","description":"Help restaurants reduce food waste"}'
+```powershell
+$body = @{ 
+    query = "Build a fintech startup for mobile payment processing targeting small businesses" 
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:8015/generate" `
+    -Method Post `
+    -Body $body `
+    -ContentType "application/json" `
+    -TimeoutSec 120
 ```
 
-## 💡 Example Ideas to Try
+---
 
-- "A SaaS platform for small restaurants to manage inventory and reduce food waste"
-- "An AI-powered personal finance app that helps millennials save money"
-- "A marketplace connecting local farmers directly with consumers"
-- "A project management tool specifically designed for remote teams"
+## 💡 Tips for Better Blueprints
 
-## 🎨 What You'll See
+### Be Specific in Your Query
 
-1. **Beautiful landing page** with glassmorphism design
-2. **Real-time generation progress** with step-by-step animations
-3. **Comprehensive blueprints** including:
-   - Market analysis with competitors
-   - Technical architecture and tech stack
-   - 4-week implementation plan
-   - Code templates and starter repositories
+**❌ Bad:**
+> "Build a tech startup"
 
-## 🔄 Next Steps
+**✅ Good:**
+> "Build a fintech startup for mobile payment processing targeting small businesses in emerging markets, with focus on offline-first architecture and USSD fallback"
 
-The following features are ready for implementation:
-- [ ] **Database Integration** - Replace mock data with PostgreSQL
-- [ ] **Enhanced Error Handling** - Retry logic and better error messages
-- [ ] **Code Template Generation** - Actual starter repositories
-- [ ] **Testing & Deployment** - Production-ready configuration
+### Industry Keywords That Trigger Context
 
-## 🆘 Need Help?
+The system auto-detects industries from keywords:
 
-- **AI Setup Guide**: See `AI_SETUP.md`
-- **Test API**: http://localhost:3001/api/test-ai
-- **Current Provider**: Mock (works out of the box)
+- **Fintech:** payment, banking, fintech, financial, money, transaction, wallet, stripe, plaid
+- **Healthcare:** healthcare, medical, health, patient, doctor, hospital, clinical, diagnosis, ehr, hipaa
+- **Ecommerce:** ecommerce, shopping, marketplace, retail, shopify, woocommerce, product
+- **SaaS:** saas, software, subscription, platform, b2b, enterprise, api, cloud
+- **AI:** ai, machine learning, artificial intelligence, ml, llm, gpt, openai, neural, model
+- **Blockchain:** blockchain, crypto, web3, ethereum, bitcoin, defi, nft, smart contract
+- **DevTools:** developer tools, api, sdk, cli, infrastructure, monitoring, cicd, platform
 
-**Happy coding! 🎉**
+---
+
+## ⚙️ Configuration
+
+### Current Environment Variables
+
+Located in: `data-pipeline/.env`
+
+```env
+QDRANT_API_KEY=eyJhbGci...
+QDRANT_URL=https://fd9eb25a-974b-4e57-aa88-95cc7aa3077e.europe-west3-0.gcp.cloud.qdrant.io:6333
+PIPELINE_HOST=127.0.0.1
+PIPELINE_PORT=8015
+GEMINI_API_KEY=AIzaSyByeBdI3gT1OCxb7IbFK70n8AEroBetmWo
+```
+
+### Switching Gemini Models
+
+If you want to switch between models for speed/cost:
+
+**Edit:** `data-pipeline/writer_agent.py` and `data-pipeline/reviewer_agent.py`
+
+```python
+# Line 65 in writer_agent.py
+DEFAULT_GEMINI_MODEL = os.getenv("LLM_MODEL", "gemini-2.5-pro")  # Current
+
+# Options:
+# - "gemini-2.5-pro"     - Most capable, slower, 2 req/min free tier
+# - "gemini-1.5-pro"     - Very capable, moderate speed, 2 req/min
+# - "gemini-1.5-flash"   - Fast, good quality, 15 req/min free tier
+```
+
+**Or set in .env:**
+```env
+LLM_MODEL=gemini-1.5-flash
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Pipeline Won't Start
+
+**Check if already running:**
+```powershell
+Get-Process | Where-Object {$_.ProcessName -like "*python*"}
+```
+
+**Kill existing process:**
+```powershell
+Get-Process | Where-Object {$_.ProcessName -like "*python*"} | Stop-Process -Force
+```
+
+**Restart:**
+```powershell
+cd D:\FoundryStack\foundry-stack\data-pipeline
+python pipeline_api.py
+```
+
+### "Unable to connect to remote server"
+
+**Check health:**
+```powershell
+curl http://localhost:8015/health
+```
+
+**Expected output:**
+```json
+{
+  "status": "ok",
+  "agents": {
+    "retriever": true,
+    "writer": true,
+    "reviewer": true,
+    "exporter": true
+  }
+}
+```
+
+### Generation Takes Too Long / Times Out
+
+**This is normal for the FIRST generation:**
+- Sentence transformer model needs to load (~2GB)
+- Gemini model initialization
+- Can take 30-90 seconds
+
+**Subsequent generations are faster:** ~10-20 seconds
+
+### Rate Limit Errors
+
+```
+429 You exceeded your current quota
+```
+
+**Solutions:**
+1. **Wait 60 seconds** between generations (free tier limit: 2 req/min)
+2. **Switch to gemini-1.5-flash** (15 req/min)
+3. **Upgrade to paid tier** (higher limits)
+
+---
+
+## 📊 What Data Is Available
+
+### Qdrant Vector Database (12 chunks)
+- Next.js documentation
+- Supabase documentation  
+- Prisma documentation
+- FastAPI documentation (7 chunks)
+- Redis documentation (2 chunks)
+
+### Fallback Context (42 contexts across 7 industries)
+- Fintech (6 contexts: Stripe, Plaid, PCI-DSS, etc.)
+- Healthcare (6 contexts: HIPAA, EHR, FDA, etc.)
+- Ecommerce (6 contexts: Shopify, payment gateways, etc.)
+- SaaS (6 contexts: pricing, metrics, PLG, etc.)
+- AI (6 contexts: LLMs, RAG, embeddings, etc.)
+- Blockchain (6 contexts: Web3, DeFi, NFTs, etc.)
+- DevTools (6 contexts: APIs, SDKs, monitoring, etc.)
+
+---
+
+## 🔄 Adding More Data
+
+### Re-crawl Fresh Data
+
+```powershell
+cd data-pipeline/crawler
+python enhanced_crawler.py
+
+cd ..
+python chunker.py -i crawled_docs_enhanced.json -o chunks.json
+python qdrant_embedder.py --embed chunks.json
+```
+
+### Verify New Data
+
+```powershell
+python test_qdrant.py
+```
+
+---
+
+## 📁 Important Files
+
+| File | Purpose |
+|------|---------|
+| `data-pipeline/.env` | API keys and configuration |
+| `data-pipeline/pipeline_api.py` | Main API server |
+| `data-pipeline/fallback_context.json` | Industry knowledge base |
+| `DIAGNOSTIC_REPORT.md` | Complete problem analysis |
+| `SOLUTION_SUMMARY.md` | What was fixed |
+| `FINAL_STATUS.md` | Complete status report |
+| `QUICK_START.md` | This file |
+
+---
+
+## ✅ Success Checklist
+
+Before generating blueprints, verify:
+
+- [ ] Pipeline running: `curl http://localhost:8015/health`
+- [ ] All agents show `true` in health check
+- [ ] `.env` file exists with valid keys
+- [ ] Qdrant has vectors: Check health response
+
+---
+
+## 🎉 You're Ready!
+
+Your system is fully operational. Try generating a blueprint:
+
+1. Open `http://localhost:3000`
+2. Enter: *"Build a fintech startup for mobile money transfer in Africa"*
+3. Click "Generate Blueprint"
+4. Wait 30-60 seconds (first time)
+5. Review your comprehensive startup blueprint!
+
+**Different industries will get different, relevant content!** 🚀

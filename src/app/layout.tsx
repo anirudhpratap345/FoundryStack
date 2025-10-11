@@ -18,8 +18,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FoundryStack - Convert Ideas to Blueprints",
-  description: "Transform startup ideas into end-to-end blueprints and 4-week implementation plans with AI-powered analysis and orchestration.",
+  title: "Finance Copilot - AI Finance Strategy for Founders",
+  description: "Get personalized funding strategies for your startup with AI. Discover your ideal funding stage, raise amount, investor types, runway guidance, and budget allocation.",
+  openGraph: {
+    title: "Finance Copilot - AI Finance Strategy for Founders",
+    description: "AI-powered financial strategy recommendations for startup founders. Get funding stage analysis, raise calculations, and investor matching.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Finance Copilot - AI Finance Strategy for Founders",
+    description: "Get personalized funding strategies for your startup with AI.",
+  },
 };
 
 export default function RootLayout({

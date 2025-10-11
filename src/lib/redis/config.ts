@@ -58,16 +58,22 @@ export const getRedisConfig = () => {
   }
   
   if (isProduction) {
-    return {
+    const baseConfig: any = {
       ...REDIS_CONFIG,
       // Production: Strict Redis requirements
       fallbackToMock: false,
       logLevel: 'error',
       socket: {
-        ...REDIS_CONFIG.socket,
-        tls: process.env.REDIS_TLS === 'true' ? {} : undefined
+        ...REDIS_CONFIG.socket
       }
     };
+    
+    // Only add TLS if explicitly enabled
+    if (process.env.REDIS_TLS === 'true') {
+      baseConfig.socket.tls = true;
+    }
+    
+    return baseConfig;
   }
   
   return REDIS_CONFIG;

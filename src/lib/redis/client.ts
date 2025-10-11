@@ -5,11 +5,11 @@ import { getRedisConfig } from './config';
 const redisConfig = getRedisConfig();
 
 // Create Redis client
-let redisClient: RedisClientType | null = null;
+let redisClient: any = null;
 let useMockClient = false;
-let mockClient: RedisClientType | null = null;
+let mockClient: any = null;
 
-export const getRedisClient = async (): Promise<RedisClientType> => {
+export const getRedisClient = async (): Promise<any> => {
   // If we're using mock client, return it immediately
   if (useMockClient) {
     if (!mockClient) {
@@ -22,7 +22,7 @@ export const getRedisClient = async (): Promise<RedisClientType> => {
     try {
       redisClient = createClient(redisConfig);
       
-      redisClient.on('error', (err) => {
+      redisClient.on('error', (err: any) => {
         console.error('Redis Client Error:', err);
       });
       
@@ -54,10 +54,10 @@ export const getRedisClient = async (): Promise<RedisClientType> => {
 };
 
 // Mock Redis client for development when Redis is not available
-const createMockRedisClient = (): RedisClientType => {
+const createMockRedisClient = (): any => {
   const mockData = new Map<string, string>();
   
-  return {
+  return ({
     get: async (key: string) => {
       return mockData.get(key) || null;
     },
@@ -105,7 +105,7 @@ const createMockRedisClient = (): RedisClientType => {
     },
     hset: async (key: string, field: string, value: string) => {
       const data = mockData.get(key);
-      let obj = {};
+      let obj: any = {};
       if (data) {
         try {
           obj = JSON.parse(data);
@@ -199,7 +199,7 @@ const createMockRedisClient = (): RedisClientType => {
     off: (event: string, callback: Function) => {},
     removeAllListeners: (event?: string) => {},
     // Add other RedisClientType properties as needed
-  } as RedisClientType;
+  } as any);
 };
 
 // Graceful shutdown

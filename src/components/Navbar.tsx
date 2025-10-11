@@ -28,7 +28,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-center">
         <div className={`nav-pill ${scrolled ? "nav-pill--scrolled" : ""} flex items-center justify-between gap-4 md:gap-8 px-4 md:px-6 py-2 w-[min(100%,1000px)] mx-auto`}>
           <Link href="/" className="text-white font-semibold text-base md:text-lg tracking-tight">
-            FoundryStack
+            Finance Copilot
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6 text-sm">
@@ -40,7 +40,7 @@ export default function Navbar() {
                className={`underline-soft nav-link transition-colors ${active==="testimonials"?"text-white":"text-gray-300 hover:text-white"}`}>Testimonials</a>
             <a href="#pricing" aria-current={isHome && active==="pricing"?"page":undefined}
                className={`underline-soft nav-link transition-colors ${active==="pricing"?"text-white":"text-gray-300 hover:text-white"}`}>Pricing</a>
-            <Link href="/blueprints" className="underline-soft nav-link text-gray-300 hover:text-white transition-colors">My Blueprints</Link>
+            <Link href="/finance-copilot" className="underline-soft nav-link text-gray-300 hover:text-white transition-colors">Get Strategy</Link>
         </nav>
 
           <div className="hidden md:flex items-center gap-2">
@@ -66,9 +66,9 @@ export default function Navbar() {
           >
             <div className="glass rounded-xl p-4 space-y-3 border border-white/10">
               <a href="#features" className="block text-gray-200" onClick={() => setOpen(false)}>Features</a>
-              <Link href="/blueprints" className="block text-gray-200" onClick={() => setOpen(false)}>My Blueprints</Link>
+              <Link href="/finance-copilot" className="block text-gray-200" onClick={() => setOpen(false)}>Get Strategy</Link>
               <a href="#pricing" className="block text-gray-200" onClick={() => setOpen(false)}>Pricing</a>
-              <Link href="/docs" className="block text-gray-200" onClick={() => setOpen(false)}>Docs</Link>
+              <a href="#testimonials" className="block text-gray-200" onClick={() => setOpen(false)}>Testimonials</a>
             </div>
           </motion.div>
         )}

@@ -423,11 +423,12 @@ export async function POST(
       
       // Generate query hash for caching
       const queryHash = generateQueryHash(businessConcept);
+      console.log(`[CACHE] Regenerate Query: "${businessConcept}" → Hash: ${queryHash}`);
       
       // Check if we have cached pipeline results
       const cachedPipeline = await PipelineCache.getPipeline(queryHash);
       if (cachedPipeline) {
-        console.log('Using cached pipeline results for regeneration');
+        console.log(`[CACHE HIT] Returning cached blueprint for regeneration query hash: ${queryHash}`);
         
         // Update blueprint with cached results
         await BlueprintService.update(id, {
@@ -453,6 +454,7 @@ export async function POST(
       }
       
       // Call unified pipeline API
+      console.log(`[CACHE MISS] Generating new blueprint for regeneration query hash: ${queryHash}`);
       const pipelineUrl = process.env.PIPELINE_API_URL || 'http://localhost:8015';
       console.log(`Calling unified pipeline at ${pipelineUrl}/generate`);
       
@@ -674,10 +676,10 @@ export async function POST(
       let updatedBlueprint;
       try {
         updatedBlueprint = await BlueprintService.update(id, {
-          market_analysis: comprehensiveBlueprint.market_analysis,
-          technical_blueprint: comprehensiveBlueprint.technical_blueprint,
-          implementation_plan: comprehensiveBlueprint.implementation_plan,
-          code_templates: comprehensiveBlueprint.code_templates,
+          market_analysis: JSON.stringify(comprehensiveBlueprint.market_analysis),
+          technical_blueprint: JSON.stringify(comprehensiveBlueprint.technical_blueprint),
+          implementation_plan: JSON.stringify(comprehensiveBlueprint.implementation_plan),
+          code_templates: JSON.stringify(comprehensiveBlueprint.code_templates),
           status: 'COMPLETED'
         });
       } catch (updateError) {
@@ -685,10 +687,10 @@ export async function POST(
         // Create mock updated blueprint if database update fails
         updatedBlueprint = {
           ...blueprint,
-          market_analysis: comprehensiveBlueprint.market_analysis,
-          technical_blueprint: comprehensiveBlueprint.technical_blueprint,
-          implementation_plan: comprehensiveBlueprint.implementation_plan,
-          code_templates: comprehensiveBlueprint.code_templates,
+          market_analysis: JSON.stringify(comprehensiveBlueprint.market_analysis),
+          technical_blueprint: JSON.stringify(comprehensiveBlueprint.technical_blueprint),
+          implementation_plan: JSON.stringify(comprehensiveBlueprint.implementation_plan),
+          code_templates: JSON.stringify(comprehensiveBlueprint.code_templates),
           status: 'COMPLETED',
           updated_at: new Date().toISOString()
         };

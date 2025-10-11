@@ -1,5 +1,5 @@
 {
-  "name": "foundry-stack",
+  "name": "finance-copilot",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,8 +12,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "type-check": "tsc --noEmit",
-    "docker:build": "docker build -t foundry-stack .",
-    "docker:run": "docker run -p 3000:3000 foundry-stack",
+    "docker:build": "docker build -t finance-copilot .",
+    "docker:run": "docker run -p 3000:3000 finance-copilot",
     "docker:compose": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "health": "curl -f http://localhost:3000/api/health || exit 1"
@@ -30,7 +30,6 @@
     "next": "15.5.2",
     "node-fetch": "^3.3.2",
     "openai": "^5.17.0",
-    "qdrant-client": "^1.7.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "redis": "^5.8.2",

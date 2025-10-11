@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight, AlertCircle } from "lucide-react";
-import { createBlueprint } from "@/lib/api/client";
+import { Zap, Target, Clock, FileText, Github, Database, Brain, Play, ArrowRight } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
@@ -13,169 +11,9 @@ import SiteFooter from "@/components/SiteFooter";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
 import HowItWorksModal from "@/components/HowItWorksModal";
-import { validateBlueprintIdea } from "@/lib/validation";
-import Link from "next/link";
 
 export default function Home() {
-  const [idea, setIdea] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [howOpen, setHowOpen] = useState(false);
-
-  const generateTitle = (idea: string): string => {
-    // Extract key concepts from the idea
-    const ideaLower = idea.toLowerCase();
-    
-    // Common patterns to extract better titles
-    if (ideaLower.includes('ai') && ideaLower.includes('fintech')) {
-      return 'AI Fintech Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('healthcare')) {
-      return 'AI Healthcare Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('ecommerce')) {
-      return 'AI E-commerce Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('education')) {
-      return 'AI Education Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('logistics')) {
-      return 'AI Logistics Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('real estate')) {
-      return 'AI Real Estate Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('agriculture')) {
-      return 'AI Agriculture Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('energy')) {
-      return 'AI Energy Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('transportation')) {
-      return 'AI Transportation Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('entertainment')) {
-      return 'AI Entertainment Blueprint';
-    }
-    
-    // Generic AI patterns
-    if (ideaLower.includes('ai') && ideaLower.includes('startup')) {
-      return 'AI Startup Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('platform')) {
-      return 'AI Platform Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('app')) {
-      return 'AI App Blueprint';
-    }
-    if (ideaLower.includes('ai') && ideaLower.includes('saas')) {
-      return 'AI SaaS Blueprint';
-    }
-    
-    // Fintech patterns
-    if (ideaLower.includes('fintech') && ideaLower.includes('startup')) {
-      return 'Fintech Startup Blueprint';
-    }
-    if (ideaLower.includes('fintech') && ideaLower.includes('platform')) {
-      return 'Fintech Platform Blueprint';
-    }
-    if (ideaLower.includes('fintech') && ideaLower.includes('app')) {
-      return 'Fintech App Blueprint';
-    }
-    
-    // E-commerce patterns
-    if (ideaLower.includes('ecommerce') && ideaLower.includes('startup')) {
-      return 'E-commerce Startup Blueprint';
-    }
-    if (ideaLower.includes('ecommerce') && ideaLower.includes('platform')) {
-      return 'E-commerce Platform Blueprint';
-    }
-    
-    // Healthcare patterns
-    if (ideaLower.includes('healthcare') && ideaLower.includes('startup')) {
-      return 'Healthcare Startup Blueprint';
-    }
-    if (ideaLower.includes('healthcare') && ideaLower.includes('platform')) {
-      return 'Healthcare Platform Blueprint';
-    }
-    
-    // Education patterns
-    if (ideaLower.includes('education') && ideaLower.includes('startup')) {
-      return 'EdTech Startup Blueprint';
-    }
-    if (ideaLower.includes('education') && ideaLower.includes('platform')) {
-      return 'EdTech Platform Blueprint';
-    }
-    
-    // Generic patterns
-    if (ideaLower.includes('startup')) {
-      return 'Startup Blueprint';
-    }
-    if (ideaLower.includes('platform')) {
-      return 'Platform Blueprint';
-    }
-    if (ideaLower.includes('app')) {
-      return 'App Blueprint';
-    }
-    if (ideaLower.includes('saas')) {
-      return 'SaaS Blueprint';
-    }
-    
-    // Fallback: clean up the first line
-    const firstLine = idea.split('\n')[0].trim();
-    if (firstLine.length > 50) {
-      return firstLine.substring(0, 50) + '... Blueprint';
-    }
-    return firstLine + ' Blueprint';
-  };
-
-  const handleGenerateBlueprint = async () => {
-    // Clear previous errors
-    setError("");
-    setValidationErrors([]);
-    setSuccess("");
-    
-    // Validate input
-    const ideaValidation = validateBlueprintIdea(idea);
-    if (!ideaValidation.isValid) {
-      setValidationErrors(ideaValidation.errors.map(e => e.message));
-      return;
-    }
-    
-    setIsGenerating(true);
-    
-    try {
-      const result = await createBlueprint({
-        title: generateTitle(idea),
-        description: idea,
-        idea: idea
-      });
-      
-      console.log('Blueprint created:', result);
-      setSuccess("Blueprint created successfully! Redirecting...");
-      
-      // Redirect to blueprints page after a short delay
-      setTimeout(() => {
-        window.location.href = '/blueprints';
-      }, 1500);
-    } catch (error: unknown) {
-      console.error('Failed to create blueprint:', error);
-      
-      // Handle different error types
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      if (errorMessage.includes('Rate limit')) {
-        setError("You're creating blueprints too quickly. Please wait a moment and try again.");
-      } else if (errorMessage.includes('Validation failed')) {
-        setError("Please check your input and try again.");
-      } else {
-        setError("Failed to create blueprint. Please try again.");
-      }
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -208,10 +46,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
           >
-            Support AI source code ability to{" "}
-            <span className="gradient-text-pink">
-              Think Fast
-            </span>
+            AI Finance Copilot for Founders
           </motion.h2>
           
           <motion.p 
@@ -220,7 +55,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.7 }}
             className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Through our advanced AI technology, we empower developers with the ability to think fast, produce more efficient code, and deliver amazing solutions in less time.
+            Generate a personalized funding strategy based on your startup's stage and traction. Get recommendations for funding stage, raise amount, investor types, runway, and budget allocation.
           </motion.p>
           
           {/* Action Buttons */}
@@ -236,8 +71,9 @@ export default function Home() {
               glow={false}
               delay={0.9}
               className="btn-primary-light rounded-full text-black"
+              onClick={() => { window.location.href = '/finance-copilot'; }}
             >
-              Get Started
+              Open Finance Copilot
               <ArrowRight className="h-5 w-5" />
             </AnimatedButton>
             <AnimatedButton 
@@ -251,7 +87,7 @@ export default function Home() {
             </AnimatedButton>
           </motion.div>
           
-          {/* Main Input Form */}
+          {/* Finance Overview Card (replaces old blueprint input) */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -268,94 +104,32 @@ export default function Home() {
                   >
                     <Brain className="h-5 w-5 text-white" />
                   </motion.div>
-                  Describe Your Startup Idea
+                  What the Finance Copilot Delivers
                 </h3>
                 <p className="text-gray-400 text-sm">
-                  Be as detailed as possible. Include your target market, problem statement, and any specific requirements.
+                  A focused, finance-first report tailored to your inputs:
                 </p>
               </div>
               <div className="space-y-6">
-                <Textarea
-                  placeholder="Example: I want to build a SaaS platform that helps small restaurants manage their inventory, reduce food waste, and optimize ordering. The target market is independent restaurants with 1-10 locations that struggle with manual inventory tracking and often over-order ingredients..."
-                  value={idea}
-                  onChange={(e) => {
-                    setIdea(e.target.value);
-                    setError("");
-                    setSuccess("");
-                  }}
-                  className="min-h-[120px] bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20"
-                />
-                
-                {/* Error Message */}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+                <ul className="text-gray-300 text-sm space-y-2">
+                  <li className="flex items-start gap-2"><span className="text-white">•</span> Funding stage recommendation (Bootstrapped → Series A+)</li>
+                  <li className="flex items-start gap-2"><span className="text-white">•</span> Raise amount with min-max range and reasoning</li>
+                  <li className="flex items-start gap-2"><span className="text-white">•</span> Investor type matching (Angels, Micro‑VC, Accelerators, etc.)</li>
+                  <li className="flex items-start gap-2"><span className="text-white">•</span> Runway estimate and burn rate guidance</li>
+                  <li className="flex items-start gap-2"><span className="text-white">•</span> Budget allocation across Hiring, Product, GTM, and more</li>
+                </ul>
+                <div className="pt-4">
+                  <AnimatedButton 
+                    onClick={() => { window.location.href = '/finance-copilot'; }}
+                    variant="primary"
+                    size="lg"
+                    glow={true}
+                    className="w-full"
                   >
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </motion.div>
-                )}
-
-                {/* Validation Errors */}
-                {validationErrors.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
-                  >
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-red-400 text-sm font-medium mb-1">Please fix the following issues:</p>
-                        <ul className="text-red-300 text-sm space-y-1">
-                          {validationErrors.map((error, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="text-red-400">•</span>
-                              {error}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-                
-                {/* Success Message */}
-                {success && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
-                  >
-                    <p className="text-green-400 text-sm">{success}</p>
-                  </motion.div>
-                )}
-                <AnimatedButton 
-                  onClick={handleGenerateBlueprint}
-                  disabled={!idea.trim() || isGenerating}
-                  variant="primary"
-                  size="lg"
-                  glow={true}
-                  className="w-full"
-                >
-                  {isGenerating ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        <Zap className="h-6 w-6" />
-                      </motion.div>
-                      Generating Blueprint...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-6 w-6" />
-                      Generate Blueprint
-                    </>
-                  )}
-                </AnimatedButton>
+                    Open Finance Copilot
+                    <ArrowRight className="h-5 w-5" />
+                  </AnimatedButton>
+                </div>
               </div>
             </GlassCard>
           </motion.div>
@@ -364,51 +138,51 @@ export default function Home() {
 
       {/* Features Section */}
       <section id="features" className="relative z-10 container mx-auto px-6 py-20">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h3 className="text-3xl font-bold text-white mb-4">
-            What You&apos;ll Get
-          </h3>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Comprehensive analysis and actionable implementation plans
-          </p>
-        </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h3 className="text-3xl font-bold text-white mb-4">
+              What You&apos;ll Get
+            </h3>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Comprehensive financial strategy and funding guidance
+            </p>
+          </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
               icon: Target,
-              title: "Market Analysis",
-              description: "Deep dive into target market, competition, and positioning strategy",
+              title: "Funding Stage",
+              description: "AI-recommended funding stage from Pre-Seed to Series A+ based on your traction",
               gradient: "from-blue-600 to-blue-800",
               glow: "blue",
               delay: 0.1
             },
             {
               icon: FileText,
-              title: "Technical Blueprint",
-              description: "Complete architecture, tech stack recommendations, and API designs",
+              title: "Raise Amount",
+              description: "Precise raise calculation with min-max range and allocation breakdown",
               gradient: "from-slate-600 to-slate-800",
               glow: "blue",
               delay: 0.2
             },
             {
               icon: Clock,
-              title: "4-Week Plan",
-              description: "Detailed sprint breakdown with milestones and deliverables",
+              title: "Runway Guidance",
+              description: "Estimated runway, burn rate advice, and financial milestone planning",
               gradient: "from-indigo-600 to-indigo-800",
               glow: "purple",
               delay: 0.3
             },
             {
               icon: Github,
-              title: "Code Templates",
-              description: "Starter repositories and boilerplate code for rapid development",
+              title: "Investor Matching",
+              description: "Prioritized investor types (Angels, VCs, Accelerators) tailored to your stage",
               gradient: "from-blue-700 to-blue-900",
               glow: "pink",
               delay: 0.4
@@ -460,10 +234,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h3 className="text-3xl font-bold text-white mb-4">
-              Powered by Modern Tech Stack
+              How It Works
             </h3>
             <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-              Built with the latest technologies for optimal performance and scalability
+              AI-powered financial analysis in three simple steps
             </p>
           </motion.div>
 
@@ -471,22 +245,22 @@ export default function Home() {
             {[
               {
                 icon: Brain,
-                title: "AI Orchestration",
-                description: "GPT-4 powered analysis and planning",
+                title: "Input Your Details",
+                description: "Share your startup info, traction, team size, and financial goals",
                 gradient: "from-blue-600 to-blue-800",
                 delay: 0.1
               },
               {
                 icon: Database,
-                title: "Vector Search",
-                description: "Qdrant for pattern matching and retrieval",
+                title: "AI Analysis",
+                description: "6 specialized agents analyze funding stage, raise amount, and investor fit",
                 gradient: "from-slate-600 to-slate-800",
                 delay: 0.2
               },
               {
                 icon: Zap,
-                title: "Fast Iteration",
-                description: "Next.js + Python for rapid development",
+                title: "Get Your Strategy",
+                description: "Receive a complete financial strategy report in under 30 seconds",
                 gradient: "from-indigo-600 to-indigo-800",
                 delay: 0.3
               }

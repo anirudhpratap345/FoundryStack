@@ -129,10 +129,12 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
                   <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
                     <h5 className="text-white font-medium mb-2">{component.name}</h5>
                     <p className="text-gray-300 text-sm mb-2">{component.description}</p>
-                    <div className="text-xs text-gray-400">
-                      <div>Tech: {component.technology}</div>
-                      <div>Scaling: {component.scaling}</div>
-                    </div>
+                    {(component as any).technology && (
+                      <div className="text-xs text-gray-400">
+                        <div>Tech: {(component as any).technology}</div>
+                        {(component as any).scaling && <div>Scaling: {(component as any).scaling}</div>}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -228,43 +230,43 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
               <p className="text-gray-300 mb-4">{api.description}</p>
               
               <div className="grid md:grid-cols-2 gap-4 text-sm">
-                {api.authentication && (
+                {(api as any).authentication && (
                   <div>
                     <span className="text-gray-400">Auth:</span>
-                    <p className="text-white">{api.authentication}</p>
+                    <p className="text-white">{(api as any).authentication}</p>
                   </div>
                 )}
-                {api.rateLimit && (
+                {(api as any).rateLimit && (
                   <div>
                     <span className="text-gray-400">Rate Limit:</span>
-                    <p className="text-white">{api.rateLimit}</p>
+                    <p className="text-white">{(api as any).rateLimit}</p>
                   </div>
                 )}
-                {api.versioning && (
+                {(api as any).versioning && (
                   <div>
                     <span className="text-gray-400">Versioning:</span>
-                    <p className="text-white">{api.versioning}</p>
+                    <p className="text-white">{(api as any).versioning}</p>
                   </div>
                 )}
               </div>
               
-              {api.examples && (
+              {(api as any).examples && (
                 <div className="mt-4">
                   <h5 className="text-white font-medium mb-2">Examples</h5>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {api.examples.request && (
+                    {(api as any).examples.request && (
                       <div>
                         <h6 className="text-gray-400 text-sm mb-1">Request</h6>
                         <pre className="bg-black/20 p-3 rounded text-xs text-gray-300 overflow-x-auto">
-                          {api.examples.request}
+                          {(api as any).examples.request}
                         </pre>
                       </div>
                     )}
-                    {api.examples.response && (
+                    {(api as any).examples.response && (
                       <div>
                         <h6 className="text-gray-400 text-sm mb-1">Response</h6>
                         <pre className="bg-black/20 p-3 rounded text-xs text-gray-300 overflow-x-auto">
-                          {api.examples.response}
+                          {(api as any).examples.response}
                         </pre>
                       </div>
                     )}
@@ -327,9 +329,13 @@ export default function TechnicalBlueprintDisplay({ blueprint }: TechnicalBluepr
                       <div className="space-y-1">
                         {table.columns.map((column, i) => (
                           <div key={i} className="text-sm">
-                            <span className="text-white font-mono">{column.name}</span>
-                            <span className="text-gray-400 mx-2">({column.type})</span>
-                            <span className="text-gray-300">{column.description}</span>
+                            <span className="text-white font-mono">{typeof column === 'string' ? column : (column as any).name}</span>
+                            {typeof column !== 'string' && (column as any).type && (
+                              <>
+                                <span className="text-gray-400 mx-2">({(column as any).type})</span>
+                                {(column as any).description && <span className="text-gray-300">{(column as any).description}</span>}
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>

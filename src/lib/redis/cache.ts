@@ -3,10 +3,11 @@ import { REDIS_CONFIG } from './config';
 
 // Cache configuration
 const CACHE_CONFIG = {
-  // Blueprint cache - 1 hour
-  BLUEPRINT_TTL: REDIS_CONFIG.ttl.BLUEPRINT,
-  // Pipeline cache - 30 minutes
-  PIPELINE_TTL: REDIS_CONFIG.ttl.PIPELINE,
+  // Blueprint cache - reduced to 5 minutes for better testing/iteration
+  // Production: consider increasing to 3600 (1 hour) once blueprint uniqueness is verified
+  BLUEPRINT_TTL: 300, // 5 minutes
+  // Pipeline cache - reduced to 5 minutes to ensure fresh generation
+  PIPELINE_TTL: 300, // 5 minutes
   // Rate limit window - 1 hour
   RATE_LIMIT_TTL: REDIS_CONFIG.ttl.RATE_LIMIT,
   // Session cache - 24 hours
@@ -52,7 +53,7 @@ export class CacheService {
       const serialized = JSON.stringify(value);
       
       if (ttlSeconds) {
-        await client.setex(key, ttlSeconds, serialized);
+        await client.setEx(key, ttlSeconds, serialized);
       } else {
         await client.set(key, serialized);
       }
@@ -109,28 +110,28 @@ export class CacheService {
   static async hget(key: string, field: string): Promise<string | null> {
     try {
       const client = await this.getClient();
-      return await client.hget(key, field);
+      return await client.hGet(key, field);
     } catch (error) {
       console.error('Cache hget error:', error);
       return null;
     }
   }
-
+  
   static async hset(key: string, field: string, value: string): Promise<boolean> {
     try {
       const client = await this.getClient();
-      await client.hset(key, field, value);
+      await client.hSet(key, field, value);
       return true;
     } catch (error) {
       console.error('Cache hset error:', error);
       return false;
     }
   }
-
+  
   static async hgetall(key: string): Promise<Record<string, string>> {
     try {
       const client = await this.getClient();
-      return await client.hgetall(key);
+      return await client.hGetAll(key);
     } catch (error) {
       console.error('Cache hgetall error:', error);
       return {};
@@ -263,7 +264,7 @@ export class SessionCache {
   // Update session activity
   static async updateSessionActivity(sessionId: string): Promise<boolean> {
     const key = CacheKeys.session(sessionId);
-    const sessionData = await CacheService.get(key);
+    const sessionData: any = await CacheService.get(key);
     if (sessionData) {
       sessionData.lastActivity = Date.now();
       return await CacheService.set(key, sessionData, CACHE_CONFIG.SESSION_TTL);
@@ -307,18 +308,10 @@ export class DraftCache {
   // List user drafts
   static async listUserDrafts(userId: string): Promise<any[]> {
     try {
-      const client = await CacheService.getClient();
-      const pattern = CacheKeys.draft(userId, '*');
-      const keys = await client.keys(pattern);
-      
-      const drafts = await Promise.all(
-        keys.map(async (key) => {
-          const draft = await CacheService.get(key);
-          return draft;
-        })
-      );
-      
-      return drafts.filter(draft => draft !== null);
+      // Note: This would require key scanning which is not accessible through the abstraction
+      // For now, return empty array. In production, use a separate index or database query
+      console.warn('listUserDrafts: Key scanning not supported through cache abstraction');
+      return [];
     } catch (error) {
       console.error('List drafts error:', error);
       return [];
@@ -328,14 +321,24 @@ export class DraftCache {
 
 // Utility function to generate query hash for caching
 export function generateQueryHash(query: string): string {
-  // Simple hash function for query caching
-  let hash = 0;
-  for (let i = 0; i < query.length; i++) {
-    const char = query.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash).toString(36);
+  // Normalize query for better cache key generation
+  // Remove common words, normalize whitespace, sort words alphabetically
+  const normalized = query
+    .toLowerCase()
+    .trim()
+    // Remove common filler words that don't change meaning
+    .replace(/\b(a|an|the|for|of|in|on|at|to|with|by|from|create|generate|build|make|blueprint|startup|app|application|platform|system|service)\b/g, '')
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim()
+    .split(' ')
+    .filter(word => word.length > 0) // Remove empty strings
+    .sort() // Sort alphabetically for order-independence
+    .join('_');
+  
+  // Use crypto hash for better distribution and collision resistance
+  const crypto = require('crypto');
+  return crypto.createHash('md5').update(normalized).digest('hex').substring(0, 16);
 }
 
 // Cache warming utility

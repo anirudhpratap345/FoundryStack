@@ -6,17 +6,17 @@ import GlassCard from "./GlassCard";
 
 const testimonials = [
   {
-    quote: "FoundryStack helped us go from idea to execution plan in a weekend.",
+    quote: "Finance Copilot gave us clarity on our funding strategy in minutes. We knew exactly what stage we were at and how much to raise.",
     author: "Ava Thompson",
     role: "Founder, FinWise AI",
   },
   {
-    quote: "The AI-generated technical blueprint was better than our agency’s.",
+    quote: "The investor matching recommendations were spot-on. We connected with the right VCs on the first try.",
     author: "Liam Patel",
     role: "CTO, RapidCart",
   },
   {
-    quote: "We raised seed funding using the exported materials. Incredible.",
+    quote: "We used the financial strategy report in our pitch deck. Raised $2M seed within 6 weeks.",
     author: "Sophia Kim",
     role: "CEO, HealthFlow",
   },
@@ -49,7 +49,7 @@ export default function Testimonials() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-gray-300 mt-3"
         >
-          Real outcomes from teams using FoundryStack
+          Real results from founders using Finance Copilot
         </motion.p>
       </div>
 
