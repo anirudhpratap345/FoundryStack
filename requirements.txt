@@ -1,0 +1,14 @@
+# Finance Copilot - Python Dependencies
+
+# Core dependencies
+python-dotenv==1.0.0
+pydantic==2.5.0
+
+# Google Gemini API
+google-generativeai==0.3.2
+fastapi==0.115.0
+uvicorn==0.30.6
+
+# Utilities
+logging==0.4.9.6
+
