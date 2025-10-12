@@ -1,49 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import FinanceInputForm from '@/components/FinanceInputForm';
-import FinanceStrategyResults from '@/components/FinanceStrategyResults';
-import type { StartupInputs, FundingStrategy } from '@/types/finance-copilot';
+import LoadingState from '@/components/LoadingState';
+import ErrorCard from '@/components/ErrorCard';
+import ResponseViewer from '@/components/ResponseViewer';
+import type { StartupInputs } from '@/types/finance-copilot';
+import { postGenerate } from '@/lib/api';
 
 export default function FinanceCopilotPage() {
-  const [strategy, setStrategy] = useState<FundingStrategy | null>(null);
+  const [result, setResult] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trialExhausted, setTrialExhausted] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Initialize or fetch persistent user_id
+  useEffect(() => {
+    try {
+      const key = 'finance_user_id';
+      const existing = localStorage.getItem(key);
+      if (existing) {
+        setUserId(existing);
+      } else {
+        const generated = `user_${Math.random().toString(36).slice(2)}_${Date.now()}`;
+        localStorage.setItem(key, generated);
+        setUserId(generated);
+      }
+    } catch {}
+  }, []);
+
+  const buildPrompt = (i: StartupInputs) => {
+    return [
+      `Startup: ${i.startupName}`,
+      `Industry: ${i.industry}`,
+      `Market: ${i.targetMarket}`,
+      `Stage: ${i.productStage}`,
+      `Team: ${i.teamSize}`,
+      `MRR: ${i.monthlyRevenue ?? 0}`,
+      `Geography: ${i.geography}`,
+      `Business Model: ${i.businessModel}`,
+      i.growthRate ? `Growth: ${i.growthRate}` : '',
+      i.tractionSummary ? `Traction: ${i.tractionSummary}` : '',
+      i.fundingGoal ? `Funding Goal: ${i.fundingGoal}` : '',
+      `Concern: ${i.mainFinancialConcern}`,
+    ].filter(Boolean).join(' | ');
+  };
 
   const handleSubmit = async (inputs: StartupInputs) => {
+    if (!userId) return;
     setIsLoading(true);
     setError(null);
-    setStrategy(null);
+    setResult(null);
+    setTrialExhausted(false);
 
     try {
-      console.log('🚀 Submitting finance strategy request...');
-      
-      const response = await fetch('/api/finance-strategy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ inputs }),
-      });
+      const payload = {
+        user_id: userId,
+        prompt: buildPrompt(inputs),
+        input_overrides: { ...inputs },
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate strategy');
+      const res = await postGenerate(payload);
+
+      if (!res.ok) {
+        if (res.status === 403) {
+          setTrialExhausted(true);
+          const msg = typeof res.error === 'string'
+            ? res.error
+            : ((res.error as any)?.detail || 'Free trial has been exhausted.');
+          setError(typeof msg === 'string' ? msg : 'Free trial has been exhausted.');
+          return;
+        }
+        const msg = typeof res.error === 'string' ? res.error : 'Failed to generate strategy';
+        throw new Error(msg);
       }
 
-      const data = await response.json();
-      console.log('✅ Strategy received:', data);
-
-      if (data.success && data.strategy) {
-        setStrategy(data.strategy);
-        // Scroll to results
-        setTimeout(() => {
-          document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      } else {
-        throw new Error(data.error || 'No strategy generated');
-      }
+      const data = res.data!;
+      setResult(data.response);
+      // persist latest
+      try { localStorage.setItem('finance_last_response', JSON.stringify(data.response)); } catch {}
+      // Scroll to results
+      setTimeout(() => { document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }); }, 100);
     } catch (err) {
       console.error('❌ Error:', err);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
@@ -53,8 +92,9 @@ export default function FinanceCopilotPage() {
   };
 
   const handleReset = () => {
-    setStrategy(null);
+    setResult(null);
     setError(null);
+    setTrialExhausted(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,7 +122,7 @@ export default function FinanceCopilotPage() {
           </motion.div>
 
           {/* Input Form */}
-          {!strategy && (
+          {!result && !trialExhausted && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -94,67 +134,24 @@ export default function FinanceCopilotPage() {
 
           {/* Error Message */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="glass-strong rounded-xl p-6 border border-red-500/20 bg-red-500/5 mb-8"
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">⚠️</span>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-red-400 mb-2">
-                    Generation Failed
-                  </h3>
-                  <p className="text-sm text-white/80 mb-4">{error}</p>
-                  <button
-                    onClick={handleReset}
-                    className="text-sm text-white/60 hover:text-white transition-colors underline"
-                  >
-                    Try again
-                  </button>
-                </div>
-              </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
+              <ErrorCard
+                message={error}
+                ctaLabel={trialExhausted ? 'Upgrade (Pricing)' : 'Try Again'}
+                onCta={trialExhausted ? () => { window.location.href = '/pricing'; } : handleReset}
+              />
             </motion.div>
           )}
 
           {/* Loading State */}
           {isLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="glass-strong rounded-xl p-12 border border-white/10 text-center"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 mb-6">
-                <svg className="animate-spin h-8 w-8 text-white" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Generating Your Strategy...
-              </h3>
-              <p className="text-sm text-white/60 mb-4">
-                Our AI agents are analyzing your startup and crafting a personalized funding strategy.
-              </p>
-              <div className="max-w-md mx-auto space-y-2 text-xs text-white/40">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Analyzing funding stage...</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse animation-delay-200" />
-                  <span>Calculating raise amount...</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse animation-delay-400" />
-                  <span>Matching investor types...</span>
-                </div>
-              </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <LoadingState />
             </motion.div>
           )}
 
           {/* Results */}
-          {strategy && !isLoading && (
+          {result && !isLoading && (
             <div id="results">
               <div className="mb-6 flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-white">Your Strategy</h2>
@@ -165,12 +162,12 @@ export default function FinanceCopilotPage() {
                   Generate New Strategy
                 </button>
               </div>
-              <FinanceStrategyResults strategy={strategy} />
+              <ResponseViewer data={result} />
             </div>
           )}
 
           {/* Info Footer */}
-          {!strategy && !isLoading && (
+          {!result && !isLoading && !trialExhausted && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Navbar from "@/components/Navbar";
+import SiteFooter from "@/components/SiteFooter";
 import ScrollProgress from "@/components/ScrollProgress";
 import SkipToContent from "@/components/SkipToContent";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
             {children}
           </main>
         </ErrorBoundary>
+        <SiteFooter />
       </body>
     </html>
   );
