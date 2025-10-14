@@ -7,7 +7,6 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import TrustStats from "@/components/TrustStats";
-import SiteFooter from "@/components/SiteFooter";
 import GlassCard from "@/components/GlassCard";
 import AnimatedButton from "@/components/AnimatedButton";
 import HowItWorksModal from "@/components/HowItWorksModal";
@@ -308,8 +307,7 @@ export default function Home() {
       {/* Pricing */}
       <Pricing />
 
-      {/* Footer */}
-      <SiteFooter />
+      {/* Footer is included in RootLayout */}
     </div>
   );
 }
