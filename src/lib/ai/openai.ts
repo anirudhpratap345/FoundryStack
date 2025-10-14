@@ -1,5 +1,5 @@
 import { AIProviderFactory, AIProvider } from './providers';
-// import { retrieverClient } from './retriever-client'; // Removed - not used in Finance Copilot
+// import { retrieverClient } from './retriever-client'; // Removed - not used in FinIQ.ai
 
 // Use the provider factory to get the appropriate AI provider
 // Initialize lazily to avoid module-level execution issues

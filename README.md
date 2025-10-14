@@ -1,8 +1,8 @@
-# Finance Copilot
+# FinIQ.ai
 
 **AI Finance Strategy for Startup Founders**
 
-Finance Copilot is an AI-powered platform that helps startup founders determine the right financial strategy for their business. Get personalized recommendations for funding stage, raise amount, investor types, runway guidance, and budget allocation—all in under 30 seconds.
+FinIQ.ai is an AI-powered platform that helps startup founders determine the right financial strategy for their business. Get personalized recommendations for funding stage, raise amount, investor types, runway guidance, and budget allocation—all in under 30 seconds.
 
 ## 🚀 Features
 
@@ -56,7 +56,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 finance-copilot/
 ├── src/
 │   ├── app/
-│   │   ├── finance-copilot/          # Main Finance Copilot page
+│   │   ├── finance-copilot/          # Main FinIQ.ai page
 │   │   └── api/
 │   │       └── finance-strategy/     # Finance strategy generation API
 │   ├── components/
@@ -75,7 +75,7 @@ finance-copilot/
 
 ## 🤖 How It Works
 
-Finance Copilot uses a **6-agent AI system** powered by Google Gemini:
+FinIQ.ai uses a **6-agent AI system** powered by Google Gemini:
 
 1. **FundingStageAgent** - Analyzes your startup and recommends funding stage
 2. **RaiseAmountCalculator** - Calculates recommended raise amount based on stage and market
@@ -195,4 +195,4 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Finance Copilot** - AI Finance Strategy for Startup Founders
+**FinIQ.ai** - AI Finance Strategy for Startup Founders

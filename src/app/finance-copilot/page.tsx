@@ -113,7 +113,7 @@ export default function FinanceCopilotPage() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              AI Finance Copilot
+              FinIQ.ai
             </h1>
             <p className="text-lg text-white/60 max-w-2xl mx-auto">
               Get personalized funding recommendations powered by AI. 

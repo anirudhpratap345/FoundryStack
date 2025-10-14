@@ -1,5 +1,5 @@
 /**
- * Finance Copilot - AI Agent Chain
+ * FinIQ.ai - AI Agent Chain
  * 
  * Multi-agent system for generating funding strategies:
  * 1. FundingStageAgent - Determines appropriate funding stage

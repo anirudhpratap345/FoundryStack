@@ -46,7 +46,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
           >
-            AI Finance Copilot for Founders
+            FinIQ.ai for Founders
           </motion.h2>
           
           <motion.p 
@@ -73,7 +73,7 @@ export default function Home() {
               className="btn-primary-light rounded-full text-black"
               onClick={() => { window.location.href = '/finance-copilot'; }}
             >
-              Open Finance Copilot
+              Open FinIQ.ai
               <ArrowRight className="h-5 w-5" />
             </AnimatedButton>
             <AnimatedButton 
@@ -104,7 +104,7 @@ export default function Home() {
                   >
                     <Brain className="h-5 w-5 text-white" />
                   </motion.div>
-                  What the Finance Copilot Delivers
+                  What FinIQ.ai Delivers
                 </h3>
                 <p className="text-gray-400 text-sm">
                   A focused, finance-first report tailored to your inputs:
@@ -126,7 +126,7 @@ export default function Home() {
                     glow={true}
                     className="w-full"
                   >
-                    Open Finance Copilot
+                    Open FinIQ.ai
                     <ArrowRight className="h-5 w-5" />
                   </AnimatedButton>
                 </div>

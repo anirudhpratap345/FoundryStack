@@ -19,16 +19,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Copilot - AI Finance Strategy for Founders",
+  title: "FinIQ.ai - AI Finance Strategy for Founders",
   description: "Get personalized funding strategies for your startup with AI. Discover your ideal funding stage, raise amount, investor types, runway guidance, and budget allocation.",
   openGraph: {
-    title: "Finance Copilot - AI Finance Strategy for Founders",
+    title: "FinIQ.ai - AI Finance Strategy for Founders",
     description: "AI-powered financial strategy recommendations for startup founders. Get funding stage analysis, raise calculations, and investor matching.",
     type: "website",
+    siteName: "FinIQ.ai",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Finance Copilot - AI Finance Strategy for Founders",
+    title: "FinIQ.ai - AI Finance Strategy for Founders",
     description: "Get personalized funding strategies for your startup with AI.",
   },
 };

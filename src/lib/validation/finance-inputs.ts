@@ -1,5 +1,5 @@
 /**
- * Validation utilities for Finance Copilot inputs
+ * Validation utilities for FinIQ.ai inputs
  */
 
 import type { StartupInputs, InputValidation, ValidationError, ValidationWarning } from '@/types/finance-copilot';

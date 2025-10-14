@@ -6,7 +6,7 @@ import GlassCard from "./GlassCard";
 
 const testimonials = [
   {
-    quote: "Finance Copilot gave us clarity on our funding strategy in minutes. We knew exactly what stage we were at and how much to raise.",
+    quote: "FinIQ.ai gave us clarity on our funding strategy in minutes. We knew exactly what stage we were at and how much to raise.",
     author: "Ava Thompson",
     role: "Founder, FinWise AI",
   },
@@ -49,7 +49,7 @@ export default function Testimonials() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-gray-300 mt-3"
         >
-          Real results from founders using Finance Copilot
+          Real results from founders using FinIQ.ai
         </motion.p>
       </div>
 
