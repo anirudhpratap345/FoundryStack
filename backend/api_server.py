@@ -29,6 +29,7 @@ app = FastAPI(title="Finance Copilot API", version="1.0.0")
 origins = [
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
+	"https://fin-iq-ai.vercel.app",
 ]
 app.add_middleware(
 	CORSMiddleware,
@@ -38,24 +39,24 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-# Redis-backed limiter (enable only if REDIS_URL present)
-REDIS_URL = os.getenv("REDIS_URL")
-use_redis_limiter = bool(REDIS_URL)
+# Force in-memory limiter on Render (disable Redis for now)
+# REDIS_URL = os.getenv("REDIS_URL")
+use_redis_limiter = False
 TRIAL_LIMIT = int(os.getenv("FINANCE_TRIAL_LIMIT", 2))
 
 if use_redis_limiter:
-	try:
-		from core.limiter_redis import RedisLimiter
-		limiter = RedisLimiter()
-		logger.info(f"[OK] Redis limiter initialized (limit={TRIAL_LIMIT})")
-	except Exception as e:
-		logger.error(f"[ERROR] Failed to initialize Redis limiter: {e}")
-		use_redis_limiter = False
-		user_trials: Dict[str, int] = {}
+    try:
+        from core.limiter_redis import RedisLimiter
+        limiter = RedisLimiter()
+        logger.info(f"[OK] Redis limiter initialized (limit={TRIAL_LIMIT})")
+    except Exception as e:
+        logger.error(f"[ERROR] Failed to initialize Redis limiter: {e}")
+        use_redis_limiter = False
+        user_trials: Dict[str, int] = {}
 else:
-	# Fallback to in-memory if Redis not configured
-	logger.warning("[WARNING] Redis not configured, using in-memory limiter")
-	user_trials: Dict[str, int] = {}
+    # Fallback to in-memory if Redis not configured
+    logger.warning("[WARNING] Redis not configured, using in-memory limiter")
+    user_trials: Dict[str, int] = {}
 
 # Request/Response models
 class GenerateRequest(BaseModel):
@@ -164,7 +165,7 @@ async def health():
 
 @app.get("/")
 async def root():
-	return {"message": "Finance Copilot API is live 🚀"}
+    return {"message": "Finance Copilot API is live 🚀"}
 
 if __name__ == "__main__":
 	import uvicorn

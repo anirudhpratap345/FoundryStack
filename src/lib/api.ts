@@ -18,10 +18,10 @@ export type GenerateError = {
 };
 
 export function getApiBase(): string {
-	// If deployed with a backend domain, set NEXT_PUBLIC_API_BASE to that URL
-	const fromEnv = process.env.NEXT_PUBLIC_API_BASE;
-	if (fromEnv && fromEnv.length > 0) return fromEnv.replace(/\/$/, "");
-	return "http://localhost:8000";
+    // If deployed with a backend domain, set NEXT_PUBLIC_API_BASE_URL to that URL
+    const fromEnv = process.env.NEXT_PUBLIC_API_BASE_URL as string | undefined;
+    if (fromEnv && fromEnv.length > 0) return fromEnv.replace(/\/$/, "");
+    return "http://localhost:8000";
 }
 
 export async function postGenerate(payload: GeneratePayload): Promise<{
