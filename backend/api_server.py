@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 env_local = Path('.env.local')
 env_file = Path('.env')
-if env_local.exists():
+if env_local.exists(): 
 	load_dotenv(env_local)
 elif env_file.exists():
 	load_dotenv(env_file)
@@ -162,6 +162,9 @@ async def generate(req: GenerateRequest):
 async def health():
 	return {"status": "ok"}
 
+@app.get("/")
+async def root():
+	return {"message": "Finance Copilot API is live 🚀"}
 
 if __name__ == "__main__":
 	import uvicorn
