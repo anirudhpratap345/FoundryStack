@@ -1,5 +1,5 @@
 """
-Prompt Templates for Finance Copilot Agents
+Prompt Templates for FinIQ.ai Agents
 Each agent has a structured prompt with clear role, context, and output format.
 """
 

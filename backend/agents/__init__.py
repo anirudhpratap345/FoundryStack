@@ -1,5 +1,5 @@
 """
-Finance Copilot Agents Package
+FinIQ.ai Agents Package
 Each agent is responsible for a specific financial analysis task.
 """
 

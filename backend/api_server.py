@@ -23,7 +23,7 @@ elif env_file.exists():
 else:
 	load_dotenv()
 
-app = FastAPI(title="Finance Copilot API", version="1.0.0")
+app = FastAPI(title="FinIQ.ai API", version="1.0.0")
 
 # CORS for local Next.js dev
 origins = [
@@ -165,7 +165,7 @@ async def health():
 
 @app.get("/")
 async def root():
-    return {"message": "Finance Copilot API is live 🚀"}
+    return {"message": "FinIQ.ai API is live 🚀"}
 
 if __name__ == "__main__":
 	import uvicorn

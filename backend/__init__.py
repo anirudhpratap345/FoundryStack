@@ -1,1 +1,1 @@
-"""Backend package root for Finance Copilot."""
+"""Backend package root for FinIQ.ai."""

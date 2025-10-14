@@ -1,5 +1,5 @@
 """
-Finance Copilot - Main Entry Point
+FinIQ.ai - Main Entry Point
 Demonstrates the agent chain execution.
 """
 
@@ -54,7 +54,7 @@ def main():
     }
     
     print("\n" + "=" * 70)
-    print("Finance Copilot for Founders")
+    print("FinIQ.ai for Founders")
     print("=" * 70)
     print("\nInput:")
     print(json.dumps(example_input, indent=2))

@@ -43,7 +43,7 @@ class ChainManager:
             api_key: Gemini API key (passed to all agents)
         """
         logger.info("=" * 70)
-        logger.info("[INIT] Initializing Finance Copilot Agent Chain")
+        logger.info("[INIT] Initializing FinIQ.ai Agent Chain")
         logger.info("=" * 70)
         
         self.api_key = api_key
@@ -76,7 +76,7 @@ class ChainManager:
         """
         start_time = datetime.now()
         logger.info("\n" + "=" * 70)
-        logger.info("[START] Starting Finance Copilot Analysis")
+        logger.info("[START] Starting FinIQ.ai Analysis")
         logger.info("=" * 70)
         
         try:
