@@ -1,15 +1,10 @@
 # Finance Copilot - Python Dependencies
 
-# Core dependencies
-python-dotenv==1.0.0
-pydantic==2.5.0
-
-# Google Gemini API
-google-generativeai==0.3.2
 fastapi==0.115.0
 uvicorn==0.30.6
+# Align with broader ecosystem and satisfy libs needing >=2.8
+pydantic==2.10.4
+python-dotenv==1.0.0
 redis==5.0.7
-
-# Utilities
-logging==0.4.9.6
-
+# Compatible with langchain-google-genai if present; works with our agents
+google-generativeai==0.8.5
